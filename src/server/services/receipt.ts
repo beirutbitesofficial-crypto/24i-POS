@@ -57,8 +57,8 @@ export async function buildReceipt(user: OrgUser, saleId: string, locale: Locale
     lines: sale.items.map((i) => ({
       name: ar ? i.nameAr : i.nameEn,
       detail: [lpair(locale, i.brandName), lpair(locale, i.variantLabel)].filter(Boolean).join(" · ") || null,
-      qty: i.sellMode === "WEIGHT" ? formatWeight(i.quantity, locale) : `${D(i.quantity).toString()} ${unitName.get(i.unitCode) ?? ""}`.trim(),
-      unitPrice: formatUsd(i.unitPrice) + (i.sellMode === "WEIGHT" ? (ar ? "/كغ" : "/kg") : ""),
+      qty: i.sellMode === "WEIGHT" ? formatWeight(i.quantity, "en") : `${D(i.quantity).toString()} ${unitName.get(i.unitCode) ?? ""}`.trim(),
+      unitPrice: formatUsd(i.unitPrice) + (i.sellMode === "WEIGHT" ? "/kg" : ""),
       total: formatUsd(D(i.lineTotal)),
       discount: D(i.discountAmount).gt(0) ? `-${formatUsd(i.discountAmount)}` : null,
     })),

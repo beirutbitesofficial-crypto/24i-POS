@@ -12,7 +12,7 @@ const amt = z.union([z.string(), z.number()]).transform((v) => String(v || "0"))
 
 export const openShift = orgAction("pos.sell", z.object({ openingUsd: amt, openingLbp: amt }), async (input, user) => {
   return db.$transaction(async (tx) => {
-    await tx.$queryRaw`SELECT pg_advisory_xact_lock(hashtext(${"shift:" + user.id}))`;
+    await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtext(${"shift:" + user.id}))`;
     const existing = await tx.cashShift.findFirst({ where: { organizationId: user.organizationId, userId: user.id, closedAt: null } });
     if (existing) throw new BusinessError("SHIFT_ALREADY_OPEN");
     const number = await nextNumber(tx, user.organizationId, "shift");

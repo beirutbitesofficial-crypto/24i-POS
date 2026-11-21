@@ -8,9 +8,7 @@ import { storeUpload } from "../services/media";
 
 const optStr = (max = 200) => z.string().trim().max(max).nullish().transform((v) => (v ? v : null));
 
-export const saveSettings = orgAction(
-  "settings.manage",
-  z.object({
+const settingsSchema = z.object({
     storeName: z.string().trim().min(1).max(120),
     storeNameAr: optStr(120),
     address: optStr(300),
@@ -35,7 +33,11 @@ export const saveSettings = orgAction(
     requirePinForVoid: z.boolean(),
     expiryAlertDays: z.coerce.number().int().min(0).max(365),
     defaultLanguage: z.enum(["ar", "en"]),
-  }),
+  });
+
+export const saveSettings = orgAction(
+  "settings.manage",
+  settingsSchema,
   async (input, user) => {
     const before = await db.storeSettings.findUniqueOrThrow({ where: { organizationId: user.organizationId } });
     const rateChanged = before.exchangeRate.toString() !== input.exchangeRate && Number(before.exchangeRate) !== Number(input.exchangeRate);

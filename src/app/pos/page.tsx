@@ -24,7 +24,7 @@ export default async function PosPage() {
     db.category.findMany({ where: { organizationId: orgId, active: true }, orderBy: [{ sortOrder: "asc" }, { nameEn: "asc" }] }),
     db.product.findMany({
       where: { organizationId: orgId, active: true, category: { active: true } },
-      orderBy: [{ sortOrder: "asc" }, { nameEn: "asc" }],
+      orderBy: [{ category: { sortOrder: "asc" } }, { sortOrder: "asc" }, { nameEn: "asc" }],
       include: {
         variants: {
           where: { active: true }, orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }],

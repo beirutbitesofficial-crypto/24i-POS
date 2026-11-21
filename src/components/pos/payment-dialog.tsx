@@ -61,7 +61,7 @@ export function PaymentDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange} size="xl" title={t("pos.payment")}>
-      <div className="grid gap-6 lg:grid-cols-[1fr_340px]">
+      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
         <div>
           <div className="mb-4 grid grid-cols-3 gap-2">
             {methods.map((m) => (
