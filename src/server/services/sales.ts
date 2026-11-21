@@ -45,7 +45,7 @@ export async function createSale(user: OrgUser, input: SaleInput) {
 
   // Idempotency: a retried submission returns the original sale.
   const existing = await db.sale.findUnique({ where: { organizationId_clientRef: { organizationId: orgId, clientRef: input.clientRef } } });
-  if (existing) return { saleId: existing.id, number: existing.number, duplicate: true };
+  if (existing) return { saleId: existing.id, number: existing.number, duplicate: true, changeUsd: existing.changeUsd.toString(), changeLbp: existing.changeLbp.toString() };
 
   const shift = await getOpenShift(orgId, user.id);
   if (!shift) throw new BusinessError("NO_OPEN_SHIFT");
@@ -160,7 +160,7 @@ export async function createSale(user: OrgUser, input: SaleInput) {
           await audit({ organizationId: orgId, userId: user.id, action: "sale.approved_adjustment", entity: "Sale", entityId: sale.id,
             details: { approvedBy, discountTotal: priced.discountTotal.toString(), overrides: lines.filter((l) => l.overridden).map((l) => l.variant.sku) } }, tx);
         }
-        return { saleId: sale.id, number, duplicate: false };
+        return { saleId: sale.id, number, duplicate: false, changeUsd: st.changeUsd.toString(), changeLbp: st.changeLbp.toString() };
       },
       { isolationLevel: Prisma.TransactionIsolationLevel.ReadCommitted, timeout: 20000 },
     );
@@ -168,7 +168,7 @@ export async function createSale(user: OrgUser, input: SaleInput) {
     // Two identical submissions raced: return the winner.
     if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2002") {
       const s = await db.sale.findUnique({ where: { organizationId_clientRef: { organizationId: orgId, clientRef: input.clientRef } } });
-      if (s) return { saleId: s.id, number: s.number, duplicate: true };
+      if (s) return { saleId: s.id, number: s.number, duplicate: true, changeUsd: s.changeUsd.toString(), changeLbp: s.changeLbp.toString() };
     }
     throw e;
   }
