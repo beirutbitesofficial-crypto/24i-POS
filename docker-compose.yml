@@ -1,0 +1,25 @@
+# Local/on-prem deployment: docker compose up -d --build
+services:
+  db:
+    image: postgres:16
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: pos
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-change-me}
+      POSTGRES_DB: pos24i
+    volumes: [pgdata:/var/lib/postgresql/data]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U pos -d pos24i"]
+      interval: 5s
+      retries: 10
+  app:
+    build: .
+    restart: unless-stopped
+    depends_on: { db: { condition: service_healthy } }
+    environment:
+      DATABASE_URL: postgresql://pos:${POSTGRES_PASSWORD:-change-me}@db:5432/pos24i?schema=public
+      COOKIE_SECURE: ${COOKIE_SECURE:-true}
+    ports: ["3000:3000"]
+  # db is only reachable inside the compose network; expose 5432 temporarily if you need to seed from outside
+volumes:
+  pgdata:

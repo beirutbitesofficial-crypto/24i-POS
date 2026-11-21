@@ -10,7 +10,7 @@
 export async function printReceipt(saleId: string, mode: "BROWSER" | "BRIDGE", bridgeUrl?: string | null): Promise<void> {
   if (mode === "BRIDGE" && bridgeUrl) {
     try {
-      const data = await fetch(`/api/receipts/${saleId}`, { cache: "no-store" }).then((r) => {
+      const data = await fetch(`/api/receipts/${saleId}?lang=en`, { cache: "no-store" }).then((r) => {
         if (!r.ok) throw new Error("receipt");
         return r.json();
       });
