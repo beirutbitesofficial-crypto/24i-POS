@@ -195,3 +195,10 @@ export async function findApproverByPin(organizationId: string, pin: string, per
   }
   return null;
 }
+
+/** For platform pages: must be 24i staff. */
+export async function requirePlatformPage(): Promise<CurrentUser> {
+  const u = await requirePageUser();
+  if (!u.isPlatformAdmin) redirect("/forbidden");
+  return u;
+}
