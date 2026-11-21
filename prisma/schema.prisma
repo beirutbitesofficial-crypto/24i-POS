@@ -1,0 +1,733 @@
+// 24i POS — multi-tenant retail platform
+// Every business record is scoped by organizationId (tenant).
+// Money: Decimal(14,4) in the organization's base currency (USD).
+// Quantities: Decimal(14,3) in the variant's stock unit (kg for weight items).
+// Financial records are never hard-deleted (sales, payments, refunds, movements, shifts).
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ───────────────────────── Platform / tenancy ─────────────────────────
+
+model Organization {
+  id        String   @id @default(cuid())
+  name      String
+  nameAr    String?
+  slug      String   @unique
+  active    Boolean  @default(true)
+  /// Enabled modules, e.g. ["pos","inventory","reports"]. Platform grows module by module.
+  modules   String[] @default(["pos", "inventory", "reports"])
+  notes     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  settings       StoreSettings?
+  users          User[]
+  categories     Category[]
+  brands         Brand[]
+  units          Unit[]
+  products       Product[]
+  variants       ProductVariant[]
+  suppliers      Supplier[]
+  purchases      Purchase[]
+  lots           InventoryLot[]
+  movements      StockMovement[]
+  sales          Sale[]
+  refunds        Refund[]
+  shifts         CashShift[]
+  auditLogs      AuditLog[]
+  heldSales      HeldSale[]
+  counters       Counter[]
+  media          Media[]
+  conversions    StockConversion[]
+  stockCounts    StockCount[]
+  barcodes       Barcode[]
+  varieties      Variety[]
+  productBrands  ProductBrand[]
+  priceHistory   PriceHistory[]
+  cashMovements  CashMovement[]
+}
+
+enum Role {
+  ADMIN
+  MANAGER
+  CASHIER
+}
+
+model User {
+  id                String        @id @default(cuid())
+  /// null for platform (24i) staff
+  organizationId    String?
+  organization      Organization? @relation(fields: [organizationId], references: [id])
+  username          String        @unique
+  name              String
+  passwordHash      String
+  /// Hashed 4–6 digit PIN used for manager approvals at the till
+  pinHash           String?
+  role              Role          @default(CASHIER)
+  isPlatformAdmin   Boolean       @default(false)
+  active            Boolean       @default(true)
+  language          String?
+  failedLogins      Int           @default(0)
+  lockedUntil       DateTime?
+  lastLoginAt       DateTime?
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+
+  sessions      Session[]
+  sales         Sale[]          @relation("SaleCashier")
+  shifts        CashShift[]
+  movements     StockMovement[]
+  auditLogs     AuditLog[]
+  refunds       Refund[]
+  purchases     Purchase[]
+  heldSales     HeldSale[]
+
+  @@index([organizationId])
+}
+
+model Session {
+  id         String   @id @default(cuid())
+  /// sha256 of the cookie token — the raw token is never stored
+  tokenHash  String   @unique
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  lastSeenAt DateTime @default(now())
+  userAgent  String?
+  ip         String?
+
+  @@index([userId])
+}
+
+model StoreSettings {
+  organizationId      String       @id
+  organization        Organization @relation(fields: [organizationId], references: [id])
+  storeName           String
+  storeNameAr         String?
+  address             String?
+  phone               String?
+  logoId              String?
+  baseCurrency        String       @default("USD")
+  /// LBP per 1 USD
+  exchangeRate        Decimal      @default(89500) @db.Decimal(14, 2)
+  exchangeRateUpdated DateTime     @default(now())
+  /// LBP cash rounding increment (e.g. 1000 or 5000)
+  lbpRounding         Int          @default(5000)
+  /// NEAREST | UP | DOWN
+  lbpRoundingMode     String       @default("NEAREST")
+  taxEnabled          Boolean      @default(false)
+  taxRate             Decimal      @default(0) @db.Decimal(6, 3)
+  taxInclusive        Boolean      @default(true)
+  taxLabel            String       @default("VAT")
+  receiptHeader       String?
+  receiptFooter       String?
+  receiptShowLogo     Boolean      @default(true)
+  receiptShowLbp      Boolean      @default(true)
+  /// BROWSER | BRIDGE
+  printMode           String       @default("BROWSER")
+  printBridgeUrl      String?      @default("http://127.0.0.1:9123")
+  paperWidthMm        Int          @default(80)
+  autoPrint           Boolean      @default(true)
+  allowNegativeStock  Boolean      @default(false)
+  /// Max discount % a cashier may apply without manager PIN
+  cashierMaxDiscount  Decimal      @default(0) @db.Decimal(5, 2)
+  requirePinForVoid   Boolean      @default(true)
+  expiryAlertDays     Int          @default(7)
+  defaultLanguage     String       @default("ar")
+  updatedAt           DateTime     @updatedAt
+}
+
+/// Per-organization sequential numbers (receipts, purchases, refunds…)
+model Counter {
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  key            String
+  value          Int          @default(0)
+
+  @@id([organizationId, key])
+}
+
+model Media {
+  id             String       @id @default(cuid())
+  organizationId String?
+  organization   Organization? @relation(fields: [organizationId], references: [id])
+  mimeType       String
+  data           Bytes
+  size           Int
+  createdAt      DateTime     @default(now())
+}
+
+// ───────────────────────── Catalog ─────────────────────────
+
+model Category {
+  id             String       @id @default(cuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  nameAr         String
+  nameEn         String
+  code           String?
+  sortOrder      Int          @default(0)
+  color          String?
+  active         Boolean      @default(true)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  products       Product[]
+
+  @@index([organizationId, sortOrder])
+}
+
+model Brand {
+  id             String         @id @default(cuid())
+  organizationId String
+  organization   Organization   @relation(fields: [organizationId], references: [id])
+  nameAr         String
+  nameEn         String
+  active         Boolean        @default(true)
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+  products       ProductBrand[]
+  variants       ProductVariant[]
+
+  @@unique([organizationId, nameEn])
+}
+
+/// Measurement unit. factor converts to the unit's base (g → kg = 0.001).
+model Unit {
+  id             String       @id @default(cuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  code           String
+  nameAr         String
+  nameEn         String
+  /// WEIGHT | COUNT | VOLUME
+  kind           String
+  /// true when quantities in this unit may be fractional (kg)
+  allowsDecimal  Boolean      @default(false)
+  active         Boolean      @default(true)
+  variants       ProductVariant[] @relation("VariantUnit")
+  packageOf      ProductVariant[] @relation("VariantPackageUnit")
+
+  @@unique([organizationId, code])
+}
+
+model Product {
+  id             String       @id @default(cuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  categoryId     String
+  category       Category     @relation(fields: [categoryId], references: [id])
+  nameAr         String
+  nameEn         String
+  description    String?
+  imageId        String?
+  taxable        Boolean      @default(true)
+  active         Boolean      @default(true)
+  /// Free-text note about what still needs owner configuration
+  setupNote      String?
+  sortOrder      Int          @default(0)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  brands         ProductBrand[]
+  varieties      Variety[]
+  variants       ProductVariant[]
+
+  @@index([organizationId, categoryId])
+}
+
+/// Which brands are available for which product (configurable — never assumed)
+model ProductBrand {
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  productId      String
+  product        Product      @relation(fields: [productId], references: [id], onDelete: Cascade)
+  brandId        String
+  brand          Brand        @relation(fields: [brandId], references: [id])
+
+  @@id([productId, brandId])
+}
+
+/// Product varieties (e.g. Honey: Original / Regular, Zaatar types, Date types)
+model Variety {
+  id             String       @id @default(cuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  productId      String
+  product        Product      @relation(fields: [productId], references: [id], onDelete: Cascade)
+  nameAr         String
+  nameEn         String
+  active         Boolean      @default(true)
+  sortOrder      Int          @default(0)
+  variants       ProductVariant[]
+
+  @@unique([productId, nameEn])
+}
+
+enum SellMode {
+  WEIGHT
+  UNIT
+}
+
+enum Packaging {
+  LOOSE
+  PACKED
+}
+
+/// The sellable, stock-holding item: product × brand × variety × packaging/size.
+model ProductVariant {
+  id               String       @id @default(cuid())
+  organizationId   String
+  organization     Organization @relation(fields: [organizationId], references: [id])
+  productId        String
+  product          Product      @relation(fields: [productId], references: [id])
+  brandId          String?
+  brand            Brand?       @relation(fields: [brandId], references: [id])
+  varietyId        String?
+  variety          Variety?     @relation(fields: [varietyId], references: [id])
+  /// Optional label, e.g. "Jar 500 g"
+  labelAr          String?
+  labelEn          String?
+  sku              String
+  sellMode         SellMode     @default(UNIT)
+  packaging        Packaging    @default(PACKED)
+  /// Unit for selling and stock (kg for WEIGHT, jar/piece/bottle… for UNIT)
+  unitId           String
+  unit             Unit         @relation("VariantUnit", fields: [unitId], references: [id])
+  /// Content of one package, e.g. 500 (g) for a jar
+  packageSize      Decimal?     @db.Decimal(14, 3)
+  packageUnitId    String?
+  packageUnit      Unit?        @relation("VariantPackageUnit", fields: [packageUnitId], references: [id])
+  /// Selling price per unit (per kg for WEIGHT). null = not configured → cannot be sold
+  price            Decimal?     @db.Decimal(14, 4)
+  wholesalePrice   Decimal?     @db.Decimal(14, 4)
+  /// Standard/last purchase cost per unit (fallback when no lot cost exists)
+  cost             Decimal?     @db.Decimal(14, 4)
+  supplierId       String?
+  supplier         Supplier?    @relation(fields: [supplierId], references: [id])
+  /// Cached on-hand quantity, maintained in the same transaction as StockMovement rows
+  stockQty         Decimal      @default(0) @db.Decimal(14, 3)
+  minStock         Decimal?     @db.Decimal(14, 3)
+  reorderQty       Decimal?     @db.Decimal(14, 3)
+  trackExpiry      Boolean      @default(false)
+  imageId          String?
+  active           Boolean      @default(true)
+  sortOrder        Int          @default(0)
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+
+  barcodes         Barcode[]
+  lots             InventoryLot[]
+  movements        StockMovement[]
+  saleItems        SaleItem[]
+  purchaseItems    PurchaseItem[]
+  priceHistory     PriceHistory[]
+  conversionsFrom  StockConversion[] @relation("ConversionFrom")
+  conversionsTo    StockConversion[] @relation("ConversionTo")
+  countItems       StockCountItem[]
+
+  @@unique([organizationId, sku])
+  @@index([organizationId, productId])
+  @@index([organizationId, active])
+}
+
+model Barcode {
+  id             String         @id @default(cuid())
+  organizationId String
+  organization   Organization   @relation(fields: [organizationId], references: [id])
+  variantId      String
+  variant        ProductVariant @relation(fields: [variantId], references: [id], onDelete: Cascade)
+  code           String
+  createdAt      DateTime       @default(now())
+
+  @@unique([organizationId, code])
+  @@index([variantId])
+}
+
+model PriceHistory {
+  id             String         @id @default(cuid())
+  organizationId String
+  organization   Organization   @relation(fields: [organizationId], references: [id])
+  variantId      String
+  variant        ProductVariant @relation(fields: [variantId], references: [id])
+  field          String
+  oldValue       Decimal?       @db.Decimal(14, 4)
+  newValue       Decimal?       @db.Decimal(14, 4)
+  userId         String?
+  createdAt      DateTime       @default(now())
+
+  @@index([variantId, createdAt])
+}
+
+// ───────────────────────── Suppliers & purchasing ─────────────────────────
+
+model Supplier {
+  id             String       @id @default(cuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  name           String
+  contactName    String?
+  phone          String?
+  address        String?
+  notes          String?
+  active         Boolean      @default(true)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  purchases      Purchase[]
+  variants       ProductVariant[]
+}
+
+model Purchase {
+  id             String       @id @default(cuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  number         Int
+  supplierId     String?
+  supplier       Supplier?    @relation(fields: [supplierId], references: [id])
+  invoiceRef     String?
+  receivedAt     DateTime     @default(now())
+  total          Decimal      @db.Decimal(14, 4)
+  notes          String?
+  userId         String
+  user           User         @relation(fields: [userId], references: [id])
+  createdAt      DateTime     @default(now())
+  items          PurchaseItem[]
+
+  @@unique([organizationId, number])
+  @@index([organizationId, receivedAt])
+}
+
+model PurchaseItem {
+  id          String         @id @default(cuid())
+  purchaseId  String
+  purchase    Purchase       @relation(fields: [purchaseId], references: [id])
+  variantId   String
+  variant     ProductVariant @relation(fields: [variantId], references: [id])
+  quantity    Decimal        @db.Decimal(14, 3)
+  unitCost    Decimal        @db.Decimal(14, 4)
+  lineTotal   Decimal        @db.Decimal(14, 4)
+  lotNumber   String?
+  expiryDate  DateTime?      @db.Date
+  lot         InventoryLot?
+}
+
+// ───────────────────────── Inventory ─────────────────────────
+
+model InventoryLot {
+  id              String         @id @default(cuid())
+  organizationId  String
+  organization    Organization   @relation(fields: [organizationId], references: [id])
+  variantId       String
+  variant         ProductVariant @relation(fields: [variantId], references: [id])
+  lotNumber       String?
+  expiryDate      DateTime?      @db.Date
+  receivedAt      DateTime       @default(now())
+  quantityIn      Decimal        @db.Decimal(14, 3)
+  quantityLeft    Decimal        @db.Decimal(14, 3)
+  unitCost        Decimal        @db.Decimal(14, 4)
+  /// PURCHASE | ADJUSTMENT | CONVERSION | RETURN | OPENING
+  source          String
+  purchaseItemId  String?        @unique
+  purchaseItem    PurchaseItem?  @relation(fields: [purchaseItemId], references: [id])
+  movements       StockMovement[]
+
+  @@index([organizationId, variantId, quantityLeft])
+  @@index([organizationId, expiryDate])
+}
+
+enum MovementType {
+  PURCHASE
+  SALE
+  REFUND
+  ADJUSTMENT
+  WASTE
+  CONVERSION_OUT
+  CONVERSION_IN
+  COUNT
+}
+
+/// Append-only stock ledger. Sum(quantity) per variant == ProductVariant.stockQty
+model StockMovement {
+  id             String         @id @default(cuid())
+  organizationId String
+  organization   Organization   @relation(fields: [organizationId], references: [id])
+  variantId      String
+  variant        ProductVariant @relation(fields: [variantId], references: [id])
+  lotId          String?
+  lot            InventoryLot?  @relation(fields: [lotId], references: [id])
+  type           MovementType
+  /// Signed quantity in the variant's stock unit
+  quantity       Decimal        @db.Decimal(14, 3)
+  unitCost       Decimal?       @db.Decimal(14, 4)
+  balanceAfter   Decimal        @db.Decimal(14, 3)
+  reason         String?
+  /// Reference to the originating document
+  refType        String?
+  refId          String?
+  userId         String?
+  user           User?          @relation(fields: [userId], references: [id])
+  createdAt      DateTime       @default(now())
+
+  @@index([organizationId, variantId, createdAt])
+  @@index([organizationId, createdAt])
+  @@index([refType, refId])
+}
+
+model StockConversion {
+  id              String         @id @default(cuid())
+  organizationId  String
+  organization    Organization   @relation(fields: [organizationId], references: [id])
+  fromVariantId   String
+  fromVariant     ProductVariant @relation("ConversionFrom", fields: [fromVariantId], references: [id])
+  fromQty         Decimal        @db.Decimal(14, 3)
+  toVariantId     String
+  toVariant       ProductVariant @relation("ConversionTo", fields: [toVariantId], references: [id])
+  toQty           Decimal        @db.Decimal(14, 3)
+  totalCost       Decimal        @db.Decimal(14, 4)
+  notes           String?
+  userId          String
+  createdAt       DateTime       @default(now())
+}
+
+model StockCount {
+  id             String       @id @default(cuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  /// OPEN | POSTED | CANCELLED
+  status         String       @default("OPEN")
+  notes          String?
+  createdById    String
+  postedAt       DateTime?
+  createdAt      DateTime     @default(now())
+  items          StockCountItem[]
+}
+
+model StockCountItem {
+  id           String         @id @default(cuid())
+  countId      String
+  count        StockCount     @relation(fields: [countId], references: [id], onDelete: Cascade)
+  variantId    String
+  variant      ProductVariant @relation(fields: [variantId], references: [id])
+  expectedQty  Decimal        @db.Decimal(14, 3)
+  countedQty   Decimal?       @db.Decimal(14, 3)
+
+  @@unique([countId, variantId])
+}
+
+// ───────────────────────── Sales ─────────────────────────
+
+enum SaleStatus {
+  COMPLETED
+  PARTIALLY_REFUNDED
+  REFUNDED
+}
+
+model Sale {
+  id               String       @id @default(cuid())
+  organizationId   String
+  organization     Organization @relation(fields: [organizationId], references: [id])
+  number           Int
+  /// Client-generated idempotency key — duplicate submissions return the original sale
+  clientRef        String
+  status           SaleStatus   @default(COMPLETED)
+  cashierId        String
+  cashier          User         @relation("SaleCashier", fields: [cashierId], references: [id])
+  shiftId          String
+  shift            CashShift    @relation(fields: [shiftId], references: [id])
+  subtotal         Decimal      @db.Decimal(14, 4)
+  /// Sum of line discounts + cart discount
+  discountTotal    Decimal      @db.Decimal(14, 4)
+  cartDiscountType String?
+  cartDiscountValue Decimal?    @db.Decimal(14, 4)
+  taxTotal         Decimal      @db.Decimal(14, 4)
+  total            Decimal      @db.Decimal(14, 4)
+  costTotal        Decimal      @db.Decimal(14, 4)
+  /// LBP per USD at time of sale
+  exchangeRate     Decimal      @db.Decimal(14, 2)
+  /// Value tendered (in base currency)
+  paidTotal        Decimal      @db.Decimal(14, 4)
+  changeUsd        Decimal      @default(0) @db.Decimal(14, 2)
+  changeLbp        Decimal      @default(0) @db.Decimal(16, 0)
+  /// Small difference absorbed by LBP cash rounding (base currency)
+  roundingAdj      Decimal      @default(0) @db.Decimal(14, 4)
+  approvedById     String?
+  printCount       Int          @default(0)
+  note             String?
+  createdAt        DateTime     @default(now())
+
+  items            SaleItem[]
+  payments         Payment[]
+  refunds          Refund[]
+
+  @@unique([organizationId, number])
+  @@unique([organizationId, clientRef])
+  @@index([organizationId, createdAt])
+  @@index([shiftId])
+}
+
+model SaleItem {
+  id              String         @id @default(cuid())
+  saleId          String
+  sale            Sale           @relation(fields: [saleId], references: [id])
+  variantId       String
+  variant         ProductVariant @relation(fields: [variantId], references: [id])
+  // Snapshots (catalog names can change later)
+  nameAr          String
+  nameEn          String
+  brandName       String?
+  variantLabel    String?
+  categoryId      String
+  unitCode        String
+  sellMode        SellMode
+  quantity        Decimal        @db.Decimal(14, 3)
+  unitPrice       Decimal        @db.Decimal(14, 4)
+  priceOverridden Boolean        @default(false)
+  discountType    String?
+  discountValue   Decimal?       @db.Decimal(14, 4)
+  /// Line discount amount + allocated share of cart discount
+  discountAmount  Decimal        @db.Decimal(14, 4)
+  lineTotal       Decimal        @db.Decimal(14, 4)
+  taxAmount       Decimal        @default(0) @db.Decimal(14, 4)
+  costTotal       Decimal        @db.Decimal(14, 4)
+  refundedQty     Decimal        @default(0) @db.Decimal(14, 3)
+  refundItems     RefundItem[]
+
+  @@index([saleId])
+  @@index([variantId])
+}
+
+enum PaymentMethod {
+  CASH
+  CARD
+  TRANSFER
+}
+
+model Payment {
+  id           String        @id @default(cuid())
+  saleId       String
+  sale         Sale          @relation(fields: [saleId], references: [id])
+  method       PaymentMethod
+  currency     String
+  amount       Decimal       @db.Decimal(16, 2)
+  /// Value in base currency at the sale's exchange rate
+  amountBase   Decimal       @db.Decimal(14, 4)
+  createdAt    DateTime      @default(now())
+
+  @@index([saleId])
+}
+
+model Refund {
+  id             String       @id @default(cuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  number         Int
+  clientRef      String
+  saleId         String
+  sale           Sale         @relation(fields: [saleId], references: [id])
+  userId         String
+  user           User         @relation(fields: [userId], references: [id])
+  approvedById   String?
+  shiftId        String?
+  reason         String
+  total          Decimal      @db.Decimal(14, 4)
+  costTotal      Decimal      @db.Decimal(14, 4)
+  method         PaymentMethod
+  currency       String
+  amountPaid     Decimal      @db.Decimal(16, 2)
+  exchangeRate   Decimal      @db.Decimal(14, 2)
+  createdAt      DateTime     @default(now())
+  items          RefundItem[]
+
+  @@unique([organizationId, number])
+  @@unique([organizationId, clientRef])
+  @@index([organizationId, createdAt])
+}
+
+model RefundItem {
+  id          String   @id @default(cuid())
+  refundId    String
+  refund      Refund   @relation(fields: [refundId], references: [id])
+  saleItemId  String
+  saleItem    SaleItem @relation(fields: [saleItemId], references: [id])
+  quantity    Decimal  @db.Decimal(14, 3)
+  amount      Decimal  @db.Decimal(14, 4)
+  costAmount  Decimal  @db.Decimal(14, 4)
+  restocked   Boolean
+}
+
+model HeldSale {
+  id             String       @id @default(cuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  userId         String
+  user           User         @relation(fields: [userId], references: [id])
+  label          String?
+  cart           Json
+  createdAt      DateTime     @default(now())
+}
+
+// ───────────────────────── Cash shifts ─────────────────────────
+
+model CashShift {
+  id              String       @id @default(cuid())
+  organizationId  String
+  organization    Organization @relation(fields: [organizationId], references: [id])
+  number          Int
+  userId          String
+  user            User         @relation(fields: [userId], references: [id])
+  openedAt        DateTime     @default(now())
+  closedAt        DateTime?
+  openingUsd      Decimal      @db.Decimal(14, 2)
+  openingLbp      Decimal      @db.Decimal(16, 0)
+  expectedUsd     Decimal?     @db.Decimal(14, 2)
+  expectedLbp     Decimal?     @db.Decimal(16, 0)
+  countedUsd      Decimal?     @db.Decimal(14, 2)
+  countedLbp      Decimal?     @db.Decimal(16, 0)
+  closingNote     String?
+  sales           Sale[]
+  cashMovements   CashMovement[]
+
+  @@unique([organizationId, number])
+  @@index([organizationId, userId, closedAt])
+}
+
+model CashMovement {
+  id             String       @id @default(cuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  shiftId        String
+  shift          CashShift    @relation(fields: [shiftId], references: [id])
+  /// IN | OUT
+  direction      String
+  currency       String
+  amount         Decimal      @db.Decimal(16, 2)
+  reason         String
+  userId         String
+  createdAt      DateTime     @default(now())
+}
+
+// ───────────────────────── Audit ─────────────────────────
+
+model AuditLog {
+  id             String        @id @default(cuid())
+  organizationId String?
+  organization   Organization? @relation(fields: [organizationId], references: [id])
+  userId         String?
+  user           User?         @relation(fields: [userId], references: [id])
+  action         String
+  entity         String?
+  entityId       String?
+  details        Json?
+  ip             String?
+  createdAt      DateTime      @default(now())
+
+  @@index([organizationId, createdAt])
+  @@index([entity, entityId])
+}
