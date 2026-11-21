@@ -254,6 +254,11 @@ export const en = {
   "cat.color": "Color",
   "cat.filterSetup": "Needs setup",
   "cat.color.hint": "Tile accent on the POS",
+  "cat.defaultPrice": "Default price",
+  "cat.filterDefault": "Default prices",
+  "cat.defaultPriceHint": "Placeholder price added by 24i. Enter your real price and save to confirm it.",
+  "dash.defaultPrices": "Review default prices",
+  "dash.defaultPricesDesc": "{count} prices are 24i placeholders. Open each product, set your real price and save.",
 
   // POS
   "pos.title": "Sale",

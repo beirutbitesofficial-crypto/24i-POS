@@ -83,26 +83,33 @@ Platform admins (24i staff) have no tenant data access through the back office �
 
 ---
 
-## Critical business decisions still needed from you
+## Catalog status & default prices
 
-The catalog was seeded **only** with what you provided. Nothing was invented: no prices, stock, barcodes, suppliers,
-varieties or brand links. Everything below is editable in the UI without code changes.
+The catalog follows the owner's list: Halloumi, Double Cream, Nabulsi, Labneh and Laban are sold under all 8 brands
+(Jaber Jaber, Lakkis, Batloun, Khoury, El Ra3i, Baladi, El Barki, Candia); Labneh Mk3zale under Jaber Jaber, Lakkis,
+Baladi; honey, molasses, molokhia, tahini, halawa and bread with their brands/types; pickles & olives both **loose
+(falet, per kg)** and **jarred (mortban, 1 kg jar)**; Dates with *بسكوت محشي دبس التمر*.
 
-1. **Which brands make which product** for Halloumi, Double Cream, Nabulsi, Labneh and Laban. The 8 brands exist,
-   but none are linked to these 5 products yet (Products → product → *Available brands*), so they have no sellable
-   variants. Only Labneh Mk3zale (Jaber Jaber, Lakkis, Baladi) is linked, as you specified.
-2. **Package sizes and prices** for every variant (all 35 seeded variants are unpriced and blocked from sale).
-   The dashboard shows a "Catalog setup" banner with the count.
-3. **Jar sizes** for pickles/olives. Each has a *Loose (Falet), per kg* variant; add a *Packed* variant per jar size.
-4. **Zaatar and Dates varieties**, and which brand makes **Chocolate Halawa** (seeded as a variety without a brand).
-5. **Exchange rate & cash rounding.** Seeded at 89,500 LBP/USD, LBP cash rounded to the nearest 5,000 — confirm in Settings.
-6. **Negative stock** is blocked by default, so stock must be received (or added as opening stock via
-   *Inventory → Adjust → Add*) before selling. Flip the setting if you prefer to sell first and count later.
-7. **Cashier discount limit** defaults to 0% (any discount needs a manager PIN); **VAT** is off.
+At the owner's request every variant has a **placeholder price** (rough USD figures, not market data). These are
+flagged **"Default price"**:
+- the dashboard shows how many are left to review,
+- *Catalog → Products → Default prices* filters them,
+- opening a variant and saving it with the real price clears the flag (CSV import with a `price` column does too).
 
-Defaults chosen for units (editable per variant): cheeses, labneh, ashta, shanklish, keshek and loose olives/pickles
-sell **by weight (kg)**; honey/tahini jars, bottles, bags, bread and coffee sell **per unit**. Arabic brand spellings
-(e.g. البرقي for El Barki) are best guesses — fix them under Catalog → Brands.
+Costs are intentionally empty — real costs come from *Inventory → Receive stock*.
+For an existing database run `npm run db:defaults` (idempotent; never overwrites a price that is already set).
+
+Still open (all editable in the UI):
+1. **Zaatar types** — a general loose Zaatar variant exists; add the types under Varieties when ready.
+2. **Chocolate Halawa brand** — seeded as a variety without a brand.
+3. **Exchange rate & cash rounding** — 89,500 LBP/USD, LBP rounded to the nearest 5,000.
+4. **Opening stock** — selling below zero is blocked by default, so receive stock (or *Inventory → Adjust → Add*)
+   before selling, or enable *Allow selling below zero stock* in Settings.
+5. **Cashier discount limit** defaults to 0% (any discount needs a manager PIN); **VAT** is off.
+
+Units are defaults too: dairy, keshek, zaatar, dates biscuits and loose olives/pickles sell by kg; jars, bottles,
+bags, bread and coffee per unit. Arabic brand spellings (e.g. البرقي for El Barki) are best guesses — fix them under
+Catalog → Brands.
 
 ---
 
@@ -114,7 +121,7 @@ Requirements: Node 20+ (22 recommended), PostgreSQL 14+.
 cp .env.example .env            # set DATABASE_URL and the seed passwords
 npm install
 npx prisma migrate deploy       # create tables
-npm run db:seed                 # 24i platform admin + Village Dairy tenant, catalog and logo (idempotent)
+npm run db:seed                 # 24i platform admin + Village Dairy tenant, catalog, default prices, logo (idempotent)
 npm run dev                     # http://localhost:3000
 ```
 
@@ -128,7 +135,7 @@ Seed logins (from `.env`; **change both passwords after first login**):
 ### First-day checklist for Village Dairy
 1. Settings → confirm exchange rate, rounding, receipt footer, printer.
 2. Settings → Users → add cashiers; give yourself/manager an approval PIN.
-3. Catalog → Products → *Needs setup* filter → link brands, add variants with size + price (+ barcodes).
+3. Catalog → Products → *Default prices* filter → set your real prices (+ barcodes, package sizes).
 4. Inventory → Receive stock (or Adjust → Add for opening stock), with expiry dates for perishables.
 5. POS → open shift with the opening cash → sell.
 

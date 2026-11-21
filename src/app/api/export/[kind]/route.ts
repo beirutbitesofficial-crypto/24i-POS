@@ -43,10 +43,10 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ kind
         include: { product: { include: { category: true } }, brand: true, variety: true, unit: true, barcodes: true },
         orderBy: [{ product: { category: { sortOrder: "asc" } } }, { product: { sortOrder: "asc" } }, { sortOrder: "asc" }],
       });
-      rows = [["sku", "category", "product_en", "product_ar", "brand", "variety", "label", "sell_mode", "unit", "price", "wholesale_price", ...(canCost ? ["cost"] : []), "stock", "min_stock", "reorder_qty", "barcodes", "active"]];
+      rows = [["sku", "category", "product_en", "product_ar", "brand", "variety", "label", "sell_mode", "unit", "price", "price_is_default", "wholesale_price", ...(canCost ? ["cost"] : []), "stock", "min_stock", "reorder_qty", "barcodes", "active"]];
       for (const v of vs) rows.push([
         v.sku, v.product.category.nameEn, v.product.nameEn, v.product.nameAr, v.brand?.nameEn ?? "", v.variety?.nameEn ?? "", v.labelEn ?? "",
-        v.sellMode, v.unit.code, v.price?.toString() ?? "", v.wholesalePrice?.toString() ?? "", ...(canCost ? [v.cost?.toString() ?? ""] : []),
+        v.sellMode, v.unit.code, v.price?.toString() ?? "", v.priceIsDefault ? "1" : "0", v.wholesalePrice?.toString() ?? "", ...(canCost ? [v.cost?.toString() ?? ""] : []),
         v.stockQty.toString(), v.minStock?.toString() ?? "", v.reorderQty?.toString() ?? "", v.barcodes.map((b) => b.code).join(" "), v.active ? "1" : "0",
       ]);
     } else if (kind === "sales") {

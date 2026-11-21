@@ -249,6 +249,11 @@ export const ar: Record<keyof typeof en, string> = {
   "cat.color": "اللون",
   "cat.filterSetup": "بحاجة لإعداد",
   "cat.color.hint": "لون المربع في شاشة البيع",
+  "cat.defaultPrice": "سعر افتراضي",
+  "cat.filterDefault": "أسعار افتراضية",
+  "cat.defaultPriceHint": "سعر مؤقت أضافته 24i. أدخل سعرك الحقيقي واحفظ لتأكيده.",
+  "dash.defaultPrices": "راجع الأسعار الافتراضية",
+  "dash.defaultPricesDesc": "{count} سعراً مؤقتاً من 24i. افتح كل منتج، ضع سعرك الحقيقي واحفظ.",
 
   "pos.title": "بيع",
   "pos.search": "ابحث أو امسح الباركود…  (F2)",

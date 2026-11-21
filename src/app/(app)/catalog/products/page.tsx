@@ -17,7 +17,7 @@ import { cn } from "@/lib/utils";
 
 export const metadata = { title: "Products" };
 
-export default async function ProductsPage({ searchParams }: { searchParams: Promise<{ q?: string; category?: string; setup?: string }> }) {
+export default async function ProductsPage({ searchParams }: { searchParams: Promise<{ q?: string; category?: string; setup?: string; defaults?: string }> }) {
   const user = await requirePageOrgUser("catalog.manage");
   const { t, locale } = await getI18n();
   const sp = await searchParams;
@@ -36,7 +36,7 @@ export default async function ProductsPage({ searchParams }: { searchParams: Pro
     db.category.findMany({ where: { organizationId: user.organizationId }, orderBy: { sortOrder: "asc" } }),
     db.product.findMany({
       where, orderBy: [{ category: { sortOrder: "asc" } }, { sortOrder: "asc" }, { nameEn: "asc" }],
-      include: { category: true, brands: { include: { brand: true } }, variants: { where: { active: true }, select: { price: true, stockQty: true } }, _count: { select: { varieties: true } } },
+      include: { category: true, brands: { include: { brand: true } }, variants: { where: { active: true }, select: { price: true, stockQty: true, priceIsDefault: true } }, _count: { select: { varieties: true } } },
     }),
     db.brand.count({ where: { organizationId: user.organizationId } }),
   ]);
@@ -46,13 +46,15 @@ export default async function ProductsPage({ searchParams }: { searchParams: Pro
       const prices = p.variants.filter((v) => v.price !== null).map((v) => D(v.price));
       const unpriced = p.variants.filter((v) => v.price === null).length;
       const needsSetup = p.variants.length === 0 || unpriced > 0;
-      return { p, prices, unpriced, needsSetup };
+      const defaults = p.variants.filter((v) => v.priceIsDefault).length;
+      return { p, prices, unpriced, needsSetup, defaults };
     })
-    .filter((r) => (sp.setup === "1" ? r.needsSetup : true));
+    .filter((r) => (sp.setup === "1" ? r.needsSetup : true))
+    .filter((r) => (sp.defaults === "1" ? r.defaults > 0 : true));
 
   const href = (patch: Record<string, string | undefined>) => {
     const u = new URLSearchParams();
-    const merged = { q: sp.q, category: sp.category, setup: sp.setup, ...patch };
+    const merged = { q: sp.q, category: sp.category, setup: sp.setup, defaults: sp.defaults, ...patch };
     for (const [k, v] of Object.entries(merged)) if (v) u.set(k, v);
     return `/catalog/products?${u}`;
   };
@@ -81,6 +83,9 @@ export default async function ProductsPage({ searchParams }: { searchParams: Pro
           <Link href={href({ setup: sp.setup === "1" ? undefined : "1" })} className={cn(chip, "inline-flex items-center gap-1", sp.setup === "1" ? "border-warn bg-warn text-white" : "border-warn/40 bg-warn-soft text-warn")}>
             <AlertTriangle className="size-3.5" />{t("cat.filterSetup")}
           </Link>
+          <Link href={href({ defaults: sp.defaults === "1" ? undefined : "1" })} className={cn(chip, sp.defaults === "1" ? "border-info bg-info text-white" : "border-info/30 bg-info-soft text-info")}>
+            {t("cat.filterDefault")}
+          </Link>
         </div>
       </div>
       <Card>
@@ -95,7 +100,7 @@ export default async function ProductsPage({ searchParams }: { searchParams: Pro
               </tr>
             </THead>
             <tbody>
-              {rows.map(({ p, prices, unpriced, needsSetup }) => {
+              {rows.map(({ p, prices, unpriced, needsSetup, defaults }) => {
                 const min = prices.length ? prices.reduce((a, b) => (a.lt(b) ? a : b)) : null;
                 const max = prices.length ? prices.reduce((a, b) => (a.gt(b) ? a : b)) : null;
                 return (
@@ -125,6 +130,7 @@ export default async function ProductsPage({ searchParams }: { searchParams: Pro
                     <TD>
                       <div className="flex flex-wrap gap-1">
                         {!p.active && <Badge>{t("common.inactive")}</Badge>}
+                        {defaults > 0 && <Badge tone="info">{t("cat.defaultPrice")} · <span className="num">{defaults}</span></Badge>}
                         {needsSetup ? (
                           <Badge tone="warn"><AlertTriangle className="size-3" />{p.variants.length === 0 ? t("common.needsSetup") : `${unpriced} ${t("cat.noPrice")}`}</Badge>
                         ) : p.active && <Badge tone="success">{t("common.active")}</Badge>}

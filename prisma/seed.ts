@@ -13,6 +13,7 @@ import bcrypt from "bcryptjs";
 import fs from "node:fs";
 import path from "node:path";
 import { provisionOrganization, nextSku } from "../src/server/services/org";
+import { applyVillageDairyDefaults } from "./village-dairy-defaults";
 
 const db = new PrismaClient();
 
@@ -228,11 +229,13 @@ async function main() {
     },
     { timeout: 60000 },
   );
+  // Owner-confirmed brand availability + placeholder prices (flagged as defaults to review)
+  await db.$transaction((tx) => applyVillageDairyDefaults(tx, org!.id, () => nextSku(tx, org!.id)), { timeout: 60000 });
   const counts = await Promise.all([
     db.product.count({ where: { organizationId: org!.id } }),
     db.productVariant.count({ where: { organizationId: org!.id } }),
   ]);
-  console.log(`✓ Village Dairy tenant: owner ${ownerUser}; ${counts[0]} products, ${counts[1]} variants (all awaiting prices)`);
+  console.log(`✓ Village Dairy tenant: owner ${ownerUser}; ${counts[0]} products, ${counts[1]} variants (default prices to review)`);
 }
 
 main()

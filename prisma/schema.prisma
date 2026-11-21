@@ -307,6 +307,8 @@ model ProductVariant {
   packageUnit      Unit?        @relation("VariantPackageUnit", fields: [packageUnitId], references: [id])
   /// Selling price per unit (per kg for WEIGHT). null = not configured → cannot be sold
   price            Decimal?     @db.Decimal(14, 4)
+  /// true while the price is a placeholder seeded by 24i, until the owner confirms/edits it
+  priceIsDefault   Boolean      @default(false)
   wholesalePrice   Decimal?     @db.Decimal(14, 4)
   /// Standard/last purchase cost per unit (fallback when no lot cost exists)
   cost             Decimal?     @db.Decimal(14, 4)

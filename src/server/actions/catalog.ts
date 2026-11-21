@@ -197,7 +197,8 @@ export const saveVariant = orgAction("catalog.manage", variantSchema, async (inp
     let variantId = id;
     if (id) {
       const before = await tx.productVariant.findFirstOrThrow({ where: { id, organizationId: orgId } });
-      await tx.productVariant.update({ where: { id }, data: { ...data, ...(sku ? { sku } : {}) } });
+      // Saving the variant form = the owner confirmed this price → no longer a 24i default
+      await tx.productVariant.update({ where: { id }, data: { ...data, ...(sku ? { sku } : {}), priceIsDefault: false } });
       for (const field of ["price", "cost", "wholesalePrice"] as const) {
         const oldV = before[field] === null ? null : D(before[field]!);
         const newV = data[field as keyof typeof data] as string | null | undefined;
@@ -316,7 +317,7 @@ export async function importVariantsCsv(form: FormData): Promise<ActionResult<{ 
             if (changed) await tx.priceHistory.create({ data: { organizationId: user.organizationId, variantId: v.id, field: f, oldValue: oldV?.toString() ?? null, newValue: newV, userId: user.id } });
           }
         }
-        await tx.productVariant.update({ where: { id: v.id }, data });
+        await tx.productVariant.update({ where: { id: v.id }, data: { ...data, ...("price" in data ? { priceIsDefault: false } : {}) } });
         updated++;
       }
       await audit({ organizationId: user.organizationId, userId: user.id, action: "catalog.import", details: { updated, skipped } }, tx);

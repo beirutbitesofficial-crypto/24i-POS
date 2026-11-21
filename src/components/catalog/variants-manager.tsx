@@ -18,11 +18,11 @@ export interface VariantRow {
   id: string; brandId: string | null; varietyId: string | null; labelAr: string | null; labelEn: string | null; sku: string;
   sellMode: "WEIGHT" | "UNIT"; packaging: "LOOSE" | "PACKED"; unitId: string; packageSize: string | null; packageUnitId: string | null;
   price: string | null; wholesalePrice: string | null; cost: string | null; supplierId: string | null; minStock: string | null; reorderQty: string | null;
-  trackExpiry: boolean; active: boolean; barcodes: string[]; stockQty: string; unitCode: string;
+  trackExpiry: boolean; active: boolean; barcodes: string[]; stockQty: string; unitCode: string; priceIsDefault: boolean;
   brandName: string | null; varietyName: string | null;
 }
 
-type Form = Omit<VariantRow, "id" | "stockQty" | "unitCode" | "brandName" | "varietyName"> & { id?: string; barcodesText: string };
+type Form = Omit<VariantRow, "id" | "stockQty" | "unitCode" | "brandName" | "varietyName" | "priceIsDefault"> & { id?: string; barcodesText: string; defaultHint?: boolean };
 
 export function VariantsManager({
   productId, variants, brands, varieties, units, suppliers, canCost,
@@ -74,7 +74,7 @@ export function VariantsManager({
                       {v.unitCode}
                     </span>
                   </TD>
-                  <TD className="num">{v.price ? <>{formatUsd(v.price)}{v.sellMode === "WEIGHT" && <span className="text-xs text-muted">{t("pos.perKg")}</span>}</> : <Badge tone="warn"><AlertTriangle className="size-3" />{t("cat.noPrice")}</Badge>}</TD>
+                  <TD className="num">{v.price ? <>{formatUsd(v.price)}{v.sellMode === "WEIGHT" && <span className="text-xs text-muted">{t("pos.perKg")}</span>}{v.priceIsDefault && <Badge tone="info" className="ms-1.5">{t("cat.defaultPrice")}</Badge>}</> : <Badge tone="warn"><AlertTriangle className="size-3" />{t("cat.noPrice")}</Badge>}</TD>
                   {canCost && <TD className="num text-muted">{v.cost ? formatUsd(v.cost) : "—"}</TD>}
                   <TD className="num">
                     <span className={v.minStock && Number(v.stockQty) <= Number(v.minStock) ? "font-semibold text-danger" : ""}>{Number(v.stockQty).toString()}</span>
@@ -82,7 +82,7 @@ export function VariantsManager({
                   </TD>
                   <TD><Badge tone={v.active ? "success" : "neutral"}>{v.active ? t("common.active") : t("common.inactive")}</Badge></TD>
                   <TD className="text-end">
-                    <Button size="icon-sm" variant="ghost" onClick={() => setForm({ ...v, barcodesText: v.barcodes.join("\n") })}><Pencil className="size-4" /></Button>
+                    <Button size="icon-sm" variant="ghost" onClick={() => { const { priceIsDefault, ...rest } = v; setForm({ ...rest, barcodesText: v.barcodes.join("\n"), defaultHint: priceIsDefault } as Form); }}><Pencil className="size-4" /></Button>
                   </TD>
                 </TR>
               );
@@ -97,8 +97,8 @@ export function VariantsManager({
           <form id="variant-form" className="grid gap-4 sm:grid-cols-2" onSubmit={async (e) => {
             e.preventDefault();
             const barcodes = form.barcodesText.split(/[\n,]+/).map((s) => s.trim()).filter(Boolean);
-            const { barcodesText, ...rest } = form;
-            void barcodesText;
+            const { barcodesText, defaultHint, ...rest } = form;
+            void barcodesText; void defaultHint;
             if (await save.run({ ...rest, productId, barcodes, ...(canCost ? {} : { cost: undefined }) })) setForm(null);
           }}>
             <Field label={t("cat.sellMode")}>
@@ -149,6 +149,7 @@ export function VariantsManager({
             <Field label={t("cat.labelAr")} hint={t("cat.labelHint")}><Input dir="rtl" value={form.labelAr ?? ""} onChange={(e) => set("labelAr", e.target.value || null)} /></Field>
             <Field label={t("cat.labelEn")}><Input dir="ltr" value={form.labelEn ?? ""} onChange={(e) => set("labelEn", e.target.value || null)} /></Field>
 
+            {form.defaultHint && <p className="rounded-lg bg-info-soft px-3 py-2 text-xs text-info sm:col-span-2">{t("cat.defaultPriceHint")}</p>}
             <div className="grid gap-4 rounded-xl bg-gold-50/60 p-4 ring-1 ring-gold-100 sm:col-span-2 sm:grid-cols-3">
               <Field label={form.sellMode === "WEIGHT" ? t("cat.pricePerKg") : t("cat.sellPrice")} error={save.fields.price}>
                 <Input inputMode="decimal" dir="ltr" placeholder="$" value={form.price ?? ""} onChange={(e) => set("price", e.target.value || null)} className="text-base font-semibold" />

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { DollarSign, ShoppingBag, TrendingUp, Undo2, AlertTriangle, CalendarClock, Settings2 } from "lucide-react";
+import { DollarSign, ShoppingBag, TrendingUp, Undo2, AlertTriangle, CalendarClock, Settings2, Tag } from "lucide-react";
 import { db } from "@/lib/db";
 import { requirePageOrgUser } from "@/lib/auth";
 import { can } from "@/lib/permissions";
@@ -28,7 +28,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
   const s = await getSettings(orgId);
   const expiryLimit = new Date(Date.now() + s.expiryAlertDays * 86400000);
 
-  const [rep, trend, lowVariants, expiring, unpriced, noVariant] = await Promise.all([
+  const [rep, trend, lowVariants, expiring, unpriced, noVariant, defaultPriced] = await Promise.all([
     salesReport(orgId, from, to),
     salesReport(orgId, trendFrom, to),
     db.productVariant.findMany({ where: { organizationId: orgId, active: true, minStock: { not: null } }, include: { product: true, brand: true, variety: true, unit: true, packageUnit: true } }),
@@ -38,6 +38,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
     }),
     db.productVariant.count({ where: { organizationId: orgId, active: true, price: null } }),
     db.product.count({ where: { organizationId: orgId, active: true, variants: { none: { active: true } } } }),
+    db.productVariant.count({ where: { organizationId: orgId, active: true, priceIsDefault: true } }),
   ]);
   const low = lowVariants.filter((v) => D(v.stockQty).lte(D(v.minStock))).slice(0, 8);
 
@@ -63,6 +64,17 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
             <div className="text-sm text-ink-700">{t("dash.needsSetupDesc", { count: unpriced, products: noVariant })}</div>
           </div>
           {can(user.role, "catalog.manage") && <Button asChild variant="outline"><Link href="/catalog/products?setup=1">{t("dash.openCatalog")}</Link></Button>}
+        </div>
+      )}
+
+      {defaultPriced > 0 && can(user.role, "catalog.manage") && (
+        <div className="mb-6 flex flex-wrap items-center gap-4 rounded-2xl border border-info/25 bg-info-soft px-5 py-4">
+          <div className="grid size-10 place-items-center rounded-xl bg-white/60 text-info"><Tag className="size-5" /></div>
+          <div className="min-w-0 flex-1">
+            <div className="font-semibold text-info">{t("dash.defaultPrices")}</div>
+            <div className="text-sm text-ink-700">{t("dash.defaultPricesDesc", { count: defaultPriced })}</div>
+          </div>
+          <Button asChild variant="outline"><Link href="/catalog/products?defaults=1">{t("dash.openCatalog")}</Link></Button>
         </div>
       )}
 
