@@ -188,6 +188,18 @@ so run one build locally before relying on it. The standalone server it starts w
 Set `DATABASE_URL`, `COOKIE_SECURE=true`; build command `npm run build`; run
 `npx prisma migrate deploy` as a release step; seed once with `npm run db:seed`.
 
+**Option C — Hostinger (app) + Supabase (database)** — the live Village Dairy setup
+- The POS tables live in a private **`pos` schema** (not `public`, which Supabase exposes through its REST API),
+  so the connection string must end with `?schema=pos`.
+- Use Supabase's **Session pooler** string (Dashboard → Connect → Session pooler, port 5432). It works over IPv4,
+  which most hosts (including Hostinger) need, and supports everything the app uses (transactions, row locks).
+  ```
+  DATABASE_URL="postgresql://postgres.<project-ref>:<db-password>@aws-<n>-eu-central-1.pooler.supabase.com:5432/postgres?schema=pos"
+  COOKIE_SECURE="true"
+  ```
+- On Hostinger: Node.js 20+, build command `npm run build`, start command `npm start`, set the two env vars above.
+- Future schema changes: `DATABASE_URL=... npx prisma migrate deploy` (the migration history is already recorded in `pos._prisma_migrations`).
+
 Health check: `GET /api/health`.
 
 ### Backups
