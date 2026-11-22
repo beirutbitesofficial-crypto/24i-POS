@@ -5,7 +5,7 @@
  * of connections up front and keep them alive, instead of paying that cost on a user's click.
  * The periodic ping also keeps the (free-tier) database from idling.
  */
-const WARM_CONNECTIONS = 5;
+const WARM_CONNECTIONS = 2; // stays well under the per-process pool size (see lib/db.ts)
 
 export async function register() {
   if (process.env.NEXT_RUNTIME !== "nodejs" || process.env.NODE_ENV !== "production") return;
