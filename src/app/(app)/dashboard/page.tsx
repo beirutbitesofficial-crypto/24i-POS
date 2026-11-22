@@ -78,7 +78,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
         </div>
       )}
 
-      <div className="mb-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="stagger mb-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <StatCard tone="dark" label={t("dash.todaySales")} value={formatUsd(rep.total)} sub={formatLbp(rep.totalLbp, locale)} icon={<DollarSign className="size-4" />} />
         <StatCard label={t("dash.orders")} value={rep.orders} sub={`${t("dash.avgOrder")}: ${formatUsd(rep.avgOrder)}`} icon={<ShoppingBag className="size-4" />} />
         {fin && <StatCard label={t("dash.grossProfit")} value={formatUsd(rep.profit)} sub={t("dash.margin", { pct: rep.margin.toString() })} icon={<TrendingUp className="size-4" />} />}

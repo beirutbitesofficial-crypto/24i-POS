@@ -14,10 +14,10 @@ export function Dialog({
   return (
     <D.Root open={open} onOpenChange={onOpenChange}>
       <D.Portal>
-        <D.Overlay className="fixed inset-0 z-50 bg-ink-950/45 backdrop-blur-[2px] data-[state=open]:animate-in" />
+        <D.Overlay className="dialog-overlay fixed inset-0 z-50 bg-ink-950/45 backdrop-blur-[2px]" />
         <D.Content
           className={cn(
-            "fixed top-1/2 left-1/2 z-50 flex max-h-[92vh] w-[calc(100vw-1.5rem)] -translate-x-1/2 -translate-y-1/2 flex-col rounded-2xl border border-ivory-300 bg-ivory-50 shadow-[var(--shadow-lift)] focus:outline-none",
+            "dialog-content fixed top-1/2 left-1/2 z-50 flex max-h-[92vh] w-[calc(100vw-1.5rem)] -translate-x-1/2 -translate-y-1/2 flex-col rounded-2xl border border-ivory-300 bg-ivory-50 shadow-[var(--shadow-lift)] focus:outline-none",
             w, className,
           )}
         >

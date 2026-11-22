@@ -1,6 +1,7 @@
 import "server-only";
 import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
+import { cache } from "react";
 import crypto from "node:crypto";
 import bcrypt from "bcryptjs";
 import type { Role } from "@prisma/client";
@@ -118,8 +119,11 @@ function toCurrentUser(u: {
   };
 }
 
-/** Resolve the current user from the session cookie (null if signed out / expired). */
-export async function getCurrentUser(): Promise<CurrentUser | null> {
+/**
+ * Resolve the current user from the session cookie (null if signed out / expired).
+ * Memoised per request: layout + page + actions share one DB lookup.
+ */
+export const getCurrentUser = cache(async (): Promise<CurrentUser | null> => {
   const jar = await cookies();
   const token = jar.get(SESSION_COOKIE)?.value;
   if (!token) return null;
@@ -139,7 +143,7 @@ export async function getCurrentUser(): Promise<CurrentUser | null> {
     }).catch(() => undefined);
   }
   return toCurrentUser(u);
-}
+});
 
 /** For pages: redirect to /login when signed out. */
 export async function requirePageUser(): Promise<CurrentUser> {

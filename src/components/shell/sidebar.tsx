@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   LayoutDashboard, ShoppingCart, Receipt, Wallet, Package, Tags, Award, Ruler, Boxes, Truck, BarChart3,
   Settings, Users, ScrollText, Menu, X, PackagePlus, SlidersHorizontal, Repeat, ClipboardList, History, CalendarClock, ListChecks, ShoppingBag,
@@ -58,8 +58,11 @@ export function Sidebar({ perms, modules, storeName, logoUrl }: { perms: string[
   const { t } = useI18n();
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  // Highlight the tapped link immediately, before the next page arrives
+  const [pendingHref, setPendingHref] = useState<string | null>(null);
+  useEffect(() => { setPendingHref(null); }, [pathname]);
   const has = (i: Item) => perms.includes(i.perm) && (!i.module || modules.includes(i.module));
-  const isActive = (href: string) => pathname === href || (href !== "/inventory" && pathname.startsWith(href + "/")) || (href === "/settings" && pathname === "/settings");
+  const isActive = (href: string) => pendingHref ? pendingHref === href : pathname === href || (href !== "/inventory" && pathname.startsWith(href + "/")) || (href === "/settings" && pathname === "/settings");
 
   const content = (
     <div className="flex h-full flex-col bg-ink-900 text-ink-300">
@@ -94,9 +97,9 @@ export function Sidebar({ perms, modules, storeName, logoUrl }: { perms: string[
                     <li key={i.href}>
                       <Link
                         href={i.href}
-                        onClick={() => setOpen(false)}
+                        onClick={() => { setOpen(false); if (i.href !== pathname) setPendingHref(i.href); }}
                         className={cn(
-                          "group flex items-center gap-3 rounded-lg px-3 py-2 text-[13.5px] transition",
+                          "group flex items-center gap-3 rounded-lg px-3 py-2 text-[13.5px] transition-[background-color,color,box-shadow] duration-150",
                           active ? "bg-ink-800 text-ivory-50 shadow-[inset_2px_0_0_var(--color-gold-400)] rtl:shadow-[inset_-2px_0_0_var(--color-gold-400)]" : "hover:bg-ink-800/60 hover:text-ivory-50",
                         )}
                       >
@@ -125,8 +128,8 @@ export function Sidebar({ perms, modules, storeName, logoUrl }: { perms: string[
       <aside className="no-print fixed inset-y-0 start-0 z-30 hidden w-64 lg:block">{content}</aside>
       {open && (
         <div className="fixed inset-0 z-50 lg:hidden">
-          <div className="absolute inset-0 bg-ink-950/50" onClick={() => setOpen(false)} />
-          <aside className="absolute inset-y-0 start-0 w-72 shadow-2xl">{content}</aside>
+          <div className="absolute inset-0 animate-fade-in bg-ink-950/50" onClick={() => setOpen(false)} />
+          <aside className="absolute inset-y-0 start-0 w-72 animate-slide-in-end shadow-2xl">{content}</aside>
         </div>
       )}
     </>

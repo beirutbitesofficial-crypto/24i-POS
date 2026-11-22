@@ -16,7 +16,7 @@ export function NumPad({ value, onChange, decimals = true, className }: { value:
     <div className={cn("grid grid-cols-3 gap-2", className)} dir="ltr">
       {keys.map((k) => (
         <button key={k} type="button" onClick={() => press(k)}
-          className="num flex h-14 items-center justify-center rounded-xl border border-ivory-300 bg-white text-xl font-medium text-ink-900 shadow-sm transition active:scale-[0.97] active:bg-ivory-200">
+          className="num flex h-14 items-center justify-center rounded-xl border border-ivory-300 bg-white text-xl font-medium text-ink-900 shadow-sm transition-[transform,background-color] duration-100 touch-manipulation active:scale-[0.94] active:bg-ivory-200">
           {k === "back" ? <Delete className="size-5" /> : k}
         </button>
       ))}

@@ -315,7 +315,7 @@ export function PosClient({
                 <div><Search className="mx-auto mb-3 size-10 text-ivory-400" />{query ? t("pos.notFound", { q: query }) : t("common.none")}</div>
               </div>
             ) : (
-              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
+              <div key={cat ?? "all"} className="stagger grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
                 {visible.map((p) => {
                   const price = priceLabel(p);
                   const anySellable = p.variants.some(sellable);
@@ -323,8 +323,8 @@ export function PosClient({
                   const weight = p.variants.length > 0 && p.variants.every((v) => v.sellMode === "WEIGHT");
                   return (
                     <button key={p.id} onClick={() => tapProduct(p)}
-                      className={cn("group relative flex min-h-[132px] flex-col overflow-hidden rounded-2xl border bg-white p-3 text-start shadow-[var(--shadow-card)] transition active:scale-[0.98]",
-                        anySellable ? "border-ivory-300 hover:border-gold-300 hover:shadow-md" : "border-dashed border-ivory-400 opacity-70")}>
+                      className={cn("group relative flex min-h-[132px] flex-col overflow-hidden rounded-2xl border bg-white p-3 text-start shadow-[var(--shadow-card)] transition-[transform,box-shadow,border-color] duration-200 ease-out touch-manipulation active:scale-[0.97] active:duration-75",
+                        anySellable ? "border-ivory-300 hover:-translate-y-0.5 hover:border-gold-300 hover:shadow-[var(--shadow-lift)]" : "border-dashed border-ivory-400 opacity-70")}>
                       <span className="absolute inset-x-0 top-0 h-1" style={{ background: catColor ?? "var(--color-gold-300)" }} />
                       <div className="mb-2 flex items-start justify-between gap-2">
                         {p.imageUrl
@@ -370,8 +370,8 @@ export function PosClient({
           </div>
           <div className="min-h-0 flex-1 overflow-y-auto px-3 scrollbar-thin">
             {done && cart.lines.length === 0 ? (
-              <div className="m-1 rounded-2xl bg-success-soft p-5 text-center">
-                <CheckCircle2 className="mx-auto mb-2 size-10 text-success" />
+              <div className="m-1 animate-pop rounded-2xl bg-success-soft p-5 text-center">
+                <CheckCircle2 className="mx-auto mb-2 size-10 animate-scale-in text-success" />
                 <div className="font-semibold text-success">{t("pos.completed", { number: done.number })}</div>
                 {(D(done.changeUsd).gt(0) || D(done.changeLbp).gt(0)) && (
                   <div className="mt-3">
@@ -399,8 +399,8 @@ export function PosClient({
                   const pl = priced.lines[i];
                   const unit = l.priceOverride ?? e.variant.price ?? "0";
                   return (
-                    <li key={l.key}>
-                      <button onClick={() => setEditKey(l.key)} className="flex w-full items-start gap-3 rounded-xl border border-ivory-200 bg-white px-3 py-2.5 text-start transition hover:border-gold-300">
+                    <li key={l.key} className="animate-slide-in-end">
+                      <button onClick={() => setEditKey(l.key)} className="flex w-full items-start gap-3 rounded-xl border border-ivory-200 bg-white px-3 py-2.5 text-start transition-[border-color,transform] duration-150 touch-manipulation hover:border-gold-300 active:scale-[0.99]">
                         <div className="min-w-0 flex-1">
                           <div className="truncate text-sm font-semibold text-ink-900">{e.product.name}</div>
                           {e.variant.label && <div className="truncate text-xs text-muted">{e.variant.label}</div>}
@@ -430,7 +430,7 @@ export function PosClient({
             <div className="mt-2 flex items-end justify-between">
               <span className="text-sm font-semibold text-ink-700">{t("pos.total")}</span>
               <div className="text-end">
-                <div className="num text-3xl font-bold tracking-tight text-ink-900">{formatUsd(priced.total)}</div>
+                <div key={priced.total.toString()} className="num animate-fade-in text-3xl font-bold tracking-tight text-ink-900">{formatUsd(priced.total)}</div>
                 <div className="num text-xs text-muted">{formatLbp(totalLbp, locale)}</div>
               </div>
             </div>
@@ -444,12 +444,12 @@ export function PosClient({
 
       {/* Variant picker */}
       <Dialog open={!!picker} onOpenChange={(o) => !o && setPicker(null)} title={picker?.name ?? ""} description={t("pos.chooseVariant")} size="lg">
-        <div className="grid gap-2 sm:grid-cols-2">
+        <div className="stagger grid gap-2 sm:grid-cols-2">
           {picker?.variants.map((v) => {
             const ok = sellable(v);
             return (
               <button key={v.id} onClick={() => chooseVariant(picker, v)}
-                className={cn("flex items-center justify-between gap-3 rounded-xl border p-4 text-start transition active:scale-[0.99]",
+                className={cn("flex items-center justify-between gap-3 rounded-xl border p-4 text-start transition-[border-color,transform,box-shadow] duration-150 touch-manipulation hover:shadow-[var(--shadow-card)] active:scale-[0.98]",
                   ok ? "border-ivory-300 bg-white hover:border-gold-400" : "border-dashed border-ivory-400 bg-ivory-100 opacity-70")}>
                 <div className="min-w-0">
                   <div className="font-semibold text-ink-900">{v.label || picker.name}</div>

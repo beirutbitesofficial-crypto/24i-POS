@@ -35,7 +35,7 @@ export default async function ReportsPage({ searchParams }: { searchParams: Prom
           <Button asChild variant="outline" className="no-print"><a href={exportHref("report-products")}><Download className="size-4" />{t("common.exportCsv")}</a></Button>
           <PrintButton />
         </>} />
-      <div className="mb-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="stagger mb-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <StatCard tone="dark" label={t("rep.netSales")} value={formatUsd(r.netSales)} sub={`${formatLbp(r.totalLbp, locale)} ${t("rep.inLbp")}`} />
         <StatCard label={t("rep.orders")} value={r.orders} sub={`${t("rep.avgOrder")} ${formatUsd(r.avgOrder)}`} />
         {fin && <StatCard label={t("rep.grossProfit")} value={formatUsd(r.profit)} sub={t("dash.margin", { pct: r.margin.toString() })} />}

@@ -110,7 +110,7 @@ export function PaymentDialog({
             <div className="text-xs tracking-wide text-ink-300 uppercase">{t("pos.payments")}</div>
             {tenders.length === 0 && <div className="text-sm text-ink-400">—</div>}
             {tenders.map((x, i) => (
-              <div key={i} className="flex items-center justify-between rounded-lg bg-ink-800 px-3 py-2 text-sm">
+              <div key={i} className="flex animate-slide-in-end items-center justify-between rounded-lg bg-ink-800 px-3 py-2 text-sm">
                 <span>{methods.find((m) => m.k === x.method)?.label}</span>
                 <span className="flex items-center gap-2">
                   <span className="num font-medium">{x.currency === "USD" ? formatUsd(x.amount) : formatLbp(x.amount, locale)}</span>

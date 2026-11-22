@@ -9,6 +9,8 @@ import "./globals.css";
 import { Toaster } from "sonner";
 import { getI18n } from "@/lib/i18n/server";
 import { I18nProvider } from "@/lib/i18n/client";
+import { Suspense } from "react";
+import { NavProgress } from "@/components/shell/nav-progress";
 
 export const metadata: Metadata = {
   title: { default: "24i POS", template: "%s · 24i POS" },
@@ -23,6 +25,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     <html lang={locale} dir={dir}>
       <body className="min-h-dvh">
         <I18nProvider locale={locale}>
+          <Suspense fallback={null}><NavProgress /></Suspense>
           {children}
           <Toaster position={dir === "rtl" ? "top-left" : "top-right"} richColors closeButton dir={dir} toastOptions={{ style: { fontFamily: "inherit" } }} />
         </I18nProvider>
