@@ -191,12 +191,15 @@ Set `DATABASE_URL`, `COOKIE_SECURE=true`; build command `npm run build`; run
 **Option C — Hostinger (app) + Supabase (database)** — the live Village Dairy setup
 - The POS tables live in a private **`pos` schema** (not `public`, which Supabase exposes through its REST API),
   so the connection string must end with `?schema=pos`.
-- Use Supabase's **Session pooler** string (Dashboard → Connect → Session pooler, port 5432). It works over IPv4,
-  which most hosts (including Hostinger) need, and supports everything the app uses (transactions, row locks).
+- Use Supabase's **Transaction pooler** string (Dashboard → Connect → Transaction pooler, port **6543**).
+  It multiplexes many app connections over a few database connections, so several Node processes
+  (and redeploys) can't exhaust the plan's client limit. The app adds `pgbouncer=true` and a small
+  per-process pool (`connection_limit=3`, override with `DB_POOL_SIZE`) automatically.
   ```
-  DATABASE_URL="postgresql://postgres.<project-ref>:<db-password>@aws-<n>-eu-central-1.pooler.supabase.com:5432/postgres?schema=pos"
+  DATABASE_URL="postgresql://postgres.<project-ref>:<db-password>@aws-<n>-eu-central-1.pooler.supabase.com:6543/postgres?schema=pos"
   COOKIE_SECURE="true"
   ```
+  For `prisma migrate deploy`, use the Session pooler string (port 5432) instead.
 - On Hostinger: Node.js 20+, build command `npm run build`, start command `npm start`, set the two env vars above.
 - Future schema changes: `DATABASE_URL=... npx prisma migrate deploy` (the migration history is already recorded in `pos._prisma_migrations`).
 
