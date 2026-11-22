@@ -121,6 +121,7 @@ export const en = {
   "auth.locked": "Too many attempts. Try again in a few minutes.",
   "auth.inactive": "This account is disabled.",
   "auth.org_inactive": "This store's subscription is inactive. Contact 24i.",
+  "auth.server_error": "Could not sign in right now (server error). Please try again in a minute.",
   "auth.contact": "Accounts are created by 24i. Contact us to get your store onboarded.",
   "auth.forbidden": "You don't have permission to view this page.",
   "auth.goHome": "Go to my home page",

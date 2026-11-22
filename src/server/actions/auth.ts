@@ -1,6 +1,6 @@
 "use server";
 import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
+import { redirect, unstable_rethrow } from "next/navigation";
 import { z } from "zod";
 import { login, logout, getCurrentUser } from "@/lib/auth";
 import { LOCALE_COOKIE } from "@/lib/i18n";
@@ -10,7 +10,16 @@ export async function loginAction(_prev: { error?: string } | undefined, form: F
     username: form.get("username"), password: form.get("password"),
   });
   if (!parsed.success) return { error: "invalid_credentials" };
-  const res = await login(parsed.data.username, parsed.data.password);
+  let res: Awaited<ReturnType<typeof login>>;
+  try {
+    res = await login(parsed.data.username, parsed.data.password);
+  } catch (e) {
+    unstable_rethrow(e);
+    // Record the real cause for diagnosis, show the user a clean message
+    const { onRequestError } = await import("@/instrumentation");
+    await onRequestError(e, { path: "/login (action)", method: "POST" }, { routeType: "action" });
+    return { error: "server_error" };
+  }
   if (!res.ok) return { error: res.error };
   // First login on this device: use the store's default language
   const jar = await cookies();
