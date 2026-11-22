@@ -17,7 +17,7 @@ export default async function PlatformOrgPage({ params }: { params: Promise<{ id
   if (!org) notFound();
   return (
     <>
-      <Link href="/platform" className="mb-3 inline-flex items-center gap-1 text-sm text-muted hover:text-ink-900"><ArrowLeft className="size-4 rtl:rotate-180" />{t("plat.title")}</Link>
+      <Link prefetch={false} href="/platform" className="mb-3 inline-flex items-center gap-1 text-sm text-muted hover:text-ink-900"><ArrowLeft className="size-4 rtl:rotate-180" />{t("plat.title")}</Link>
       <PageHeader eyebrow={org.slug} title={org.name} />
       <div className="space-y-8">
         <OrgSettingsCard org={{ id: org.id, name: org.name, nameAr: org.nameAr, active: org.active, modules: org.modules, notes: org.notes }} />

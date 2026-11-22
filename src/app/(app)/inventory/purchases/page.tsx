@@ -24,16 +24,16 @@ export default async function PurchasesPage({ searchParams }: { searchParams: Pr
   ]);
   return (
     <>
-      <PageHeader eyebrow={t("nav.inventory")} title={t("inv.purchases")} actions={<Button asChild><Link href="/inventory/receive"><Plus className="size-4" />{t("inv.receive")}</Link></Button>} />
+      <PageHeader eyebrow={t("nav.inventory")} title={t("inv.purchases")} actions={<Button asChild><Link prefetch={false} href="/inventory/receive"><Plus className="size-4" />{t("inv.receive")}</Link></Button>} />
       <Card>
-        {rows.length === 0 ? <EmptyState icon={<ShoppingBag className="size-6" />} title={t("inv.purchases")} action={<Button asChild variant="gold"><Link href="/inventory/receive">{t("inv.receive")}</Link></Button>} /> : (
+        {rows.length === 0 ? <EmptyState icon={<ShoppingBag className="size-6" />} title={t("inv.purchases")} action={<Button asChild variant="gold"><Link prefetch={false} href="/inventory/receive">{t("inv.receive")}</Link></Button>} /> : (
           <>
             <Table>
               <THead><tr><TH>#</TH><TH>{t("common.date")}</TH><TH>{t("nav.suppliers")}</TH><TH>{t("inv.invoiceRef")}</TH><TH>{t("sales.items")}</TH><TH>{t("common.user")}</TH><TH className="text-end">{t("common.total")}</TH></tr></THead>
               <tbody>
                 {rows.map((p) => (
                   <TR key={p.id}>
-                    <TD><Link className="num font-semibold text-gold-700 hover:underline" href={`/inventory/purchases/${p.id}`}>#{p.number}</Link></TD>
+                    <TD><Link prefetch={false} className="num font-semibold text-gold-700 hover:underline" href={`/inventory/purchases/${p.id}`}>#{p.number}</Link></TD>
                     <TD className="num text-muted">{p.receivedAt.toLocaleDateString(locale === "ar" ? "ar-LB" : "en-GB")}</TD>
                     <TD>{p.supplier?.name ?? "—"}</TD>
                     <TD className="num">{p.invoiceRef ?? "—"}</TD>

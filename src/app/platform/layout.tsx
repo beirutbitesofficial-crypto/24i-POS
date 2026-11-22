@@ -11,7 +11,7 @@ export default async function PlatformLayout({ children }: { children: React.Rea
   return (
     <div className="min-h-dvh">
       <header className="flex h-16 items-center justify-between bg-ink-900 px-4 sm:px-8">
-        <Link href="/platform"><BrandMark light /></Link>
+        <Link prefetch={false} href="/platform"><BrandMark light /></Link>
         <div className="flex items-center gap-2">
           <LanguageSwitch dark />
           <UserMenu name={user.name} role="ADMIN" dark />

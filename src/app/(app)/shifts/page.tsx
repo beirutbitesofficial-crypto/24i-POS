@@ -40,7 +40,7 @@ export default async function ShiftsPage() {
           </CardBody>
         </Card>
       ) : (
-        <Card className="mb-6"><EmptyState icon={<Wallet className="size-6" />} title={t("shift.noOpen")} action={<Button asChild variant="gold"><Link href="/pos">{t("pos.openShift")}</Link></Button>} /></Card>
+        <Card className="mb-6"><EmptyState icon={<Wallet className="size-6" />} title={t("shift.noOpen")} action={<Button asChild variant="gold"><Link prefetch={false} href="/pos">{t("pos.openShift")}</Link></Button>} /></Card>
       )}
       <Card>
         <Table>
@@ -51,7 +51,7 @@ export default async function ShiftsPage() {
               const vl = s.countedLbp !== null && s.expectedLbp !== null ? D(s.countedLbp).minus(D(s.expectedLbp)) : null;
               return (
                 <TR key={s.id}>
-                  <TD><Link href={`/shifts/${s.id}`} className="num font-semibold text-gold-700 hover:underline">#{s.number}</Link></TD>
+                  <TD><Link prefetch={false} href={`/shifts/${s.id}`} className="num font-semibold text-gold-700 hover:underline">#{s.number}</Link></TD>
                   <TD>{s.user.name}</TD>
                   <TD className="num text-xs text-muted">{dt(s.openedAt)}</TD>
                   <TD>{s.closedAt ? <span className="num text-xs text-muted">{dt(s.closedAt)}</span> : <Badge tone="gold">{t("common.open")}</Badge>}</TD>

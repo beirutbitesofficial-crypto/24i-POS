@@ -9,8 +9,8 @@ export function Pagination({ page, pages, total, makeHref, t }: { page: number; 
     <div className="flex items-center justify-between gap-2 border-t border-ivory-200 px-4 py-3 text-xs text-muted">
       <span>{t("common.results", { count: total })} · {t("common.page", { page, pages })}</span>
       <div className="flex gap-2">
-        {page > 1 && <Link className={btn} href={makeHref(page - 1)}><ChevronLeft className="size-3.5 rtl:rotate-180" />{t("common.previous")}</Link>}
-        {page < pages && <Link className={btn} href={makeHref(page + 1)}>{t("common.next")}<ChevronRight className="size-3.5 rtl:rotate-180" /></Link>}
+        {page > 1 && <Link prefetch={false} className={btn} href={makeHref(page - 1)}><ChevronLeft className="size-3.5 rtl:rotate-180" />{t("common.previous")}</Link>}
+        {page < pages && <Link prefetch={false} className={btn} href={makeHref(page + 1)}>{t("common.next")}<ChevronRight className="size-3.5 rtl:rotate-180" /></Link>}
       </div>
     </div>
   );

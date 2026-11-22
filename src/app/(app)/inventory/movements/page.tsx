@@ -43,9 +43,9 @@ export default async function MovementsPage({ searchParams }: { searchParams: Pr
     <>
       <PageHeader eyebrow={t("nav.inventory")} title={t("inv.movements")} />
       <div className="mb-4 flex gap-2 overflow-x-auto pb-1 scrollbar-thin">
-        <Link href={href({ type: undefined, page: undefined })} className={cn(chip, !sp.type ? "border-ink-900 bg-ink-900 text-ivory-50" : "border-ivory-300 bg-ivory-50")}>{t("common.all")}</Link>
-        {TYPES.map((ty) => <Link key={ty} href={href({ type: ty, page: undefined })} className={cn(chip, sp.type === ty ? "border-ink-900 bg-ink-900 text-ivory-50" : "border-ivory-300 bg-ivory-50")}>{t(`inv.move.${ty}`)}</Link>)}
-        {sp.variant && <Link href={href({ variant: undefined })} className={cn(chip, "border-gold-400 bg-gold-50 text-gold-700")}>✕ {rows[0] ? ln(locale, rows[0].variant.product) : ""}</Link>}
+        <Link prefetch={false} href={href({ type: undefined, page: undefined })} className={cn(chip, !sp.type ? "border-ink-900 bg-ink-900 text-ivory-50" : "border-ivory-300 bg-ivory-50")}>{t("common.all")}</Link>
+        {TYPES.map((ty) => <Link prefetch={false} key={ty} href={href({ type: ty, page: undefined })} className={cn(chip, sp.type === ty ? "border-ink-900 bg-ink-900 text-ivory-50" : "border-ivory-300 bg-ivory-50")}>{t(`inv.move.${ty}`)}</Link>)}
+        {sp.variant && <Link prefetch={false} href={href({ variant: undefined })} className={cn(chip, "border-gold-400 bg-gold-50 text-gold-700")}>✕ {rows[0] ? ln(locale, rows[0].variant.product) : ""}</Link>}
       </div>
       <Card>
         {rows.length === 0 ? <EmptyState icon={<History className="size-6" />} title={t("common.none")} /> : (
@@ -58,7 +58,7 @@ export default async function MovementsPage({ searchParams }: { searchParams: Pr
                   return (
                     <TR key={m.id}>
                       <TD className="num text-xs whitespace-nowrap text-muted">{m.createdAt.toLocaleString(locale === "ar" ? "ar-LB" : "en-GB")}</TD>
-                      <TD><Link href={href({ variant: m.variantId, page: undefined })} className="hover:text-gold-700"><div className="font-medium">{ln(locale, m.variant.product)}</div><div className="text-xs text-muted">{variantLabel(locale, m.variant)}</div></Link></TD>
+                      <TD><Link prefetch={false} href={href({ variant: m.variantId, page: undefined })} className="hover:text-gold-700"><div className="font-medium">{ln(locale, m.variant.product)}</div><div className="text-xs text-muted">{variantLabel(locale, m.variant)}</div></Link></TD>
                       <TD><Badge tone={q.gt(0) ? "success" : m.type === "WASTE" ? "danger" : "neutral"}>{t(`inv.move.${m.type}`)}</Badge></TD>
                       <TD className={cn("num text-end font-semibold", q.gt(0) ? "text-success" : "text-ink-900")}>{q.gt(0) ? "+" : ""}{q.toString()} <span className="text-xs font-normal text-muted">{m.variant.unit.code}</span></TD>
                       <TD className="num text-end">{D(m.balanceAfter).toString()}</TD>

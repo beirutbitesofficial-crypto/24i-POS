@@ -40,7 +40,7 @@ export default async function ShiftPage({ params }: { params: Promise<{ id: stri
   const vl = shift.countedLbp !== null ? D(shift.countedLbp).minus(D(expLbp)) : null;
   return (
     <>
-      <Link href="/shifts" className="no-print mb-3 inline-flex items-center gap-1 text-sm text-muted hover:text-ink-900"><ArrowLeft className="size-4 rtl:rotate-180" />{t("shift.title")}</Link>
+      <Link prefetch={false} href="/shifts" className="no-print mb-3 inline-flex items-center gap-1 text-sm text-muted hover:text-ink-900"><ArrowLeft className="size-4 rtl:rotate-180" />{t("shift.title")}</Link>
       <PageHeader eyebrow={s.storeName} title={<>{t("shift.zReport")} <span className="num">#{shift.number}</span></>}
         description={`${shift.user.name} · ${dt(shift.openedAt)} → ${shift.closedAt ? dt(shift.closedAt) : t("common.open")}`} actions={<PrintButton />} />
       <div className="grid gap-6 lg:grid-cols-2">

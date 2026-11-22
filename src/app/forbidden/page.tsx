@@ -10,7 +10,7 @@ export default async function Forbidden() {
       <div className="text-center">
         <ShieldAlert className="mx-auto mb-4 size-12 text-gold-500" />
         <p className="mb-6 text-lg text-ink-800">{t("auth.forbidden")}</p>
-        <Button asChild variant="primary"><Link href="/">{t("auth.goHome")}</Link></Button>
+        <Button asChild variant="primary"><Link prefetch={false} href="/">{t("auth.goHome")}</Link></Button>
       </div>
     </main>
   );

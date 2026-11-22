@@ -15,9 +15,11 @@ export default async function PosPage() {
   const user = await requirePageOrgUser("pos.sell");
   const { locale } = await getI18n();
   const orgId = user.organizationId;
-  const s = await getSettings(orgId);
+  const [s, shift] = await Promise.all([
+    getSettings(orgId),
+    db.cashShift.findFirst({ where: { organizationId: orgId, userId: user.id, closedAt: null } }),
+  ]);
   const storeName = (locale === "ar" ? s.storeNameAr || s.storeName : s.storeName) ?? "";
-  const shift = await db.cashShift.findFirst({ where: { organizationId: orgId, userId: user.id, closedAt: null } });
   if (!shift) return <OpenShiftScreen storeName={storeName} userName={user.name} role={user.role} canBackOffice={can(user.role, "dashboard.view")} />;
 
   const [categories, products, held] = await Promise.all([

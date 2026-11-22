@@ -76,14 +76,14 @@ export default async function ProductsPage({ searchParams }: { searchParams: Pro
       <div className="mb-4 flex flex-col gap-3 lg:flex-row lg:items-center">
         <SearchBox placeholder={t("cat.searchProducts")} className="lg:w-80" />
         <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-thin">
-          <Link href={href({ category: undefined })} className={cn(chip, !sp.category ? "border-ink-900 bg-ink-900 text-ivory-50" : "border-ivory-300 bg-ivory-50 hover:bg-ivory-200")}>{t("common.all")}</Link>
+          <Link prefetch={false} href={href({ category: undefined })} className={cn(chip, !sp.category ? "border-ink-900 bg-ink-900 text-ivory-50" : "border-ivory-300 bg-ivory-50 hover:bg-ivory-200")}>{t("common.all")}</Link>
           {categories.map((c) => (
-            <Link key={c.id} href={href({ category: c.id })} className={cn(chip, sp.category === c.id ? "border-ink-900 bg-ink-900 text-ivory-50" : "border-ivory-300 bg-ivory-50 hover:bg-ivory-200")}>{ln(locale, c)}</Link>
+            <Link prefetch={false} key={c.id} href={href({ category: c.id })} className={cn(chip, sp.category === c.id ? "border-ink-900 bg-ink-900 text-ivory-50" : "border-ivory-300 bg-ivory-50 hover:bg-ivory-200")}>{ln(locale, c)}</Link>
           ))}
-          <Link href={href({ setup: sp.setup === "1" ? undefined : "1" })} className={cn(chip, "inline-flex items-center gap-1", sp.setup === "1" ? "border-warn bg-warn text-white" : "border-warn/40 bg-warn-soft text-warn")}>
+          <Link prefetch={false} href={href({ setup: sp.setup === "1" ? undefined : "1" })} className={cn(chip, "inline-flex items-center gap-1", sp.setup === "1" ? "border-warn bg-warn text-white" : "border-warn/40 bg-warn-soft text-warn")}>
             <AlertTriangle className="size-3.5" />{t("cat.filterSetup")}
           </Link>
-          <Link href={href({ defaults: sp.defaults === "1" ? undefined : "1" })} className={cn(chip, sp.defaults === "1" ? "border-info bg-info text-white" : "border-info/30 bg-info-soft text-info")}>
+          <Link prefetch={false} href={href({ defaults: sp.defaults === "1" ? undefined : "1" })} className={cn(chip, sp.defaults === "1" ? "border-info bg-info text-white" : "border-info/30 bg-info-soft text-info")}>
             {t("cat.filterDefault")}
           </Link>
         </div>
@@ -106,7 +106,7 @@ export default async function ProductsPage({ searchParams }: { searchParams: Pro
                 return (
                   <TR key={p.id}>
                     <TD>
-                      <Link href={`/catalog/products/${p.id}`} className="flex items-center gap-3">
+                      <Link prefetch={false} href={`/catalog/products/${p.id}`} className="flex items-center gap-3">
                         {p.imageId ? (
                           // eslint-disable-next-line @next/next/no-img-element
                           <img src={mediaUrl(p.imageId)!} alt="" className="size-10 rounded-lg object-cover ring-1 ring-ivory-300" />

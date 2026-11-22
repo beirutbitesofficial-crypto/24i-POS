@@ -33,7 +33,7 @@ export default async function SalePage({ params }: { params: Promise<{ id: strin
   const sub = (i: (typeof sale.items)[number]) => [lpair(locale, i.brandName), lpair(locale, i.variantLabel)].filter(Boolean).join(" · ");
   return (
     <>
-      <Link href="/sales" className="mb-3 inline-flex items-center gap-1 text-sm text-muted hover:text-ink-900"><ArrowLeft className="size-4 rtl:rotate-180" />{t("sales.title")}</Link>
+      <Link prefetch={false} href="/sales" className="mb-3 inline-flex items-center gap-1 text-sm text-muted hover:text-ink-900"><ArrowLeft className="size-4 rtl:rotate-180" />{t("sales.title")}</Link>
       <PageHeader eyebrow={t("sales.receipt")} title={<span className="num">#{sale.number}</span>}
         description={`${dt(sale.createdAt)} · ${sale.cashier.name}`}
         actions={<>

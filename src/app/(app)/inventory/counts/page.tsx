@@ -32,7 +32,7 @@ export default async function CountsPage() {
                   <TD><Badge tone={c.status === "OPEN" ? "gold" : c.status === "POSTED" ? "success" : "neutral"}>{t(`inv.countStatus.${c.status}` as "inv.countStatus.OPEN")}</Badge></TD>
                   <TD className="num">{c._count.items}</TD>
                   <TD className="text-muted">{users.find((u) => u.id === c.createdById)?.name}</TD>
-                  <TD className="text-end"><Link href={`/inventory/counts/${c.id}`} className="text-sm font-medium text-gold-700 hover:underline">{t("common.open")}</Link></TD>
+                  <TD className="text-end"><Link prefetch={false} href={`/inventory/counts/${c.id}`} className="text-sm font-medium text-gold-700 hover:underline">{t("common.open")}</Link></TD>
                 </TR>
               ))}
             </tbody>

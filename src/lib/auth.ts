@@ -52,10 +52,11 @@ async function clientInfo() {
   };
 }
 
-export async function login(username: string, password: string): Promise<{ ok: true; user: CurrentUser } | { ok: false; error: string }> {
+export async function login(username: string, password: string): Promise<{ ok: true; user: CurrentUser; defaultLanguage: string | null } | { ok: false; error: string }> {
+  // One joined query: user + organization + the store's default language
   const user = await db.user.findUnique({
     where: { username: username.trim().toLowerCase() },
-    include: { organization: true },
+    include: { organization: { include: { settings: { select: { defaultLanguage: true } } } } },
   });
   // Constant-ish time: always run bcrypt
   const fakeHash = "$2b$11$C6UzMDM.H6dfI/f/IKcEeO5H4bqkF8qH3l7b6cWb1x7bQe3zv8V9K";
@@ -78,7 +79,9 @@ export async function login(username: string, password: string): Promise<{ ok: t
 
   const token = crypto.randomBytes(32).toString("base64url");
   const info = await clientInfo();
-  await db.$transaction([
+  // Independent writes in parallel: one round-trip of latency instead of five (BEGIN…COMMIT).
+  // Only the session row is required for the login to work; the others are bookkeeping.
+  await Promise.all([
     db.session.create({
       data: { tokenHash: sha256(token), userId: user.id, expiresAt: new Date(Date.now() + SESSION_HOURS * 3600_000), ...info },
     }),
@@ -93,7 +96,7 @@ export async function login(username: string, password: string): Promise<{ ok: t
     path: "/",
     maxAge: SESSION_HOURS * 3600,
   });
-  return { ok: true, user: toCurrentUser(user) };
+  return { ok: true, user: toCurrentUser(user), defaultLanguage: user.organization?.settings?.defaultLanguage ?? null };
 }
 
 export async function logout() {
@@ -137,7 +140,8 @@ export const getCurrentUser = cache(async (): Promise<CurrentUser | null> => {
   if (!u.isPlatformAdmin && (!u.organization || !u.organization.active)) return null;
   // Sliding expiry, written at most every 10 minutes
   if (Date.now() - session.lastSeenAt.getTime() > 10 * 60_000) {
-    await db.session.update({
+    // Fire-and-forget: never make the page wait for this bookkeeping write
+    void db.session.update({
       where: { id: session.id },
       data: { lastSeenAt: new Date(), expiresAt: new Date(Date.now() + SESSION_HOURS * 3600_000) },
     }).catch(() => undefined);

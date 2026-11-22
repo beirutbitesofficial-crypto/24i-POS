@@ -23,7 +23,7 @@ export default async function PurchasePage({ params }: { params: Promise<{ id: s
   const dl = (d: Date | null) => (d ? d.toLocaleDateString(locale === "ar" ? "ar-LB" : "en-GB") : "—");
   return (
     <>
-      <Link href="/inventory/purchases" className="no-print mb-3 inline-flex items-center gap-1 text-sm text-muted hover:text-ink-900"><ArrowLeft className="size-4 rtl:rotate-180" />{t("inv.purchases")}</Link>
+      <Link prefetch={false} href="/inventory/purchases" className="no-print mb-3 inline-flex items-center gap-1 text-sm text-muted hover:text-ink-900"><ArrowLeft className="size-4 rtl:rotate-180" />{t("inv.purchases")}</Link>
       <PageHeader eyebrow={t("inv.purchase")} title={`#${p.number}`} actions={<PrintButton />} />
       <Card className="mb-6">
         <CardBody className="grid gap-4 text-sm sm:grid-cols-4">

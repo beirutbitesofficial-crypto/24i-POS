@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import {
   LayoutDashboard, ShoppingCart, Receipt, Wallet, Package, Tags, Award, Ruler, Boxes, Truck, BarChart3,
@@ -57,6 +57,7 @@ const NAV: Section[] = [
 export function Sidebar({ perms, modules, storeName, logoUrl }: { perms: string[]; modules: string[]; storeName: string; logoUrl: string | null }) {
   const { t } = useI18n();
   const pathname = usePathname();
+  const router = useRouter();
   const [open, setOpen] = useState(false);
   // Highlight the tapped link immediately, before the next page arrives
   const [pendingHref, setPendingHref] = useState<string | null>(null);
@@ -98,6 +99,8 @@ export function Sidebar({ perms, modules, storeName, logoUrl }: { perms: string[
                       <Link
                         href={i.href}
                         onClick={() => { setOpen(false); if (i.href !== pathname) setPendingHref(i.href); }}
+                        onMouseEnter={() => router.prefetch(i.href)}
+                        onTouchStart={() => router.prefetch(i.href)}
                         className={cn(
                           "group flex items-center gap-3 rounded-lg px-3 py-2 text-[13.5px] transition-[background-color,color,box-shadow] duration-150",
                           active ? "bg-ink-800 text-ivory-50 shadow-[inset_2px_0_0_var(--color-gold-400)] rtl:shadow-[inset_-2px_0_0_var(--color-gold-400)]" : "hover:bg-ink-800/60 hover:text-ivory-50",

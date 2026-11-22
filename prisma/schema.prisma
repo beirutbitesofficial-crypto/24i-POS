@@ -5,7 +5,10 @@
 // Financial records are never hard-deleted (sales, payments, refunds, movements, shifts).
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  // Load relations with SQL JOINs (1 round-trip instead of 1 per relation level).
+  // Matters a lot when the database is far from the app server.
+  previewFeatures = ["relationJoins"]
 }
 
 datasource db {

@@ -23,7 +23,7 @@ export function OpenShiftScreen({ storeName, userName, role, canBackOffice }: { 
       <header className="flex items-center justify-between px-6 py-4">
         <BrandMark light />
         <div className="flex items-center gap-2">
-          {canBackOffice && <Button asChild variant="ghost" className="text-ink-300 hover:bg-ink-800 hover:text-ivory-50"><Link href="/dashboard"><LayoutDashboard className="size-4" />{t("pos.backOffice")}</Link></Button>}
+          {canBackOffice && <Button asChild variant="ghost" className="text-ink-300 hover:bg-ink-800 hover:text-ivory-50"><Link prefetch={false} href="/dashboard"><LayoutDashboard className="size-4" />{t("pos.backOffice")}</Link></Button>}
           <LanguageSwitch dark />
           <UserMenu name={userName} role={role} dark />
         </div>

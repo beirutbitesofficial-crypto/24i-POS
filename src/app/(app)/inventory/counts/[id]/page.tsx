@@ -20,7 +20,7 @@ export default async function CountPage({ params }: { params: Promise<{ id: stri
   if (!count) notFound();
   return (
     <>
-      <Link href="/inventory/counts" className="mb-3 inline-flex items-center gap-1 text-sm text-muted hover:text-ink-900"><ArrowLeft className="size-4 rtl:rotate-180" />{t("inv.counts")}</Link>
+      <Link prefetch={false} href="/inventory/counts" className="mb-3 inline-flex items-center gap-1 text-sm text-muted hover:text-ink-900"><ArrowLeft className="size-4 rtl:rotate-180" />{t("inv.counts")}</Link>
       <PageHeader eyebrow={t("inv.counts")} title={count.createdAt.toLocaleString(locale === "ar" ? "ar-LB" : "en-GB")}
         actions={<Badge tone={count.status === "OPEN" ? "gold" : count.status === "POSTED" ? "success" : "neutral"}>{t(`inv.countStatus.${count.status}` as "inv.countStatus.OPEN")}</Badge>} />
       <CountSheet countId={count.id} open={count.status === "OPEN"}

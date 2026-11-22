@@ -63,7 +63,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
             <div className="font-semibold text-warn">{t("dash.needsSetup")}</div>
             <div className="text-sm text-ink-700">{t("dash.needsSetupDesc", { count: unpriced, products: noVariant })}</div>
           </div>
-          {can(user.role, "catalog.manage") && <Button asChild variant="outline"><Link href="/catalog/products?setup=1">{t("dash.openCatalog")}</Link></Button>}
+          {can(user.role, "catalog.manage") && <Button asChild variant="outline"><Link prefetch={false} href="/catalog/products?setup=1">{t("dash.openCatalog")}</Link></Button>}
         </div>
       )}
 
@@ -74,7 +74,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
             <div className="font-semibold text-info">{t("dash.defaultPrices")}</div>
             <div className="text-sm text-ink-700">{t("dash.defaultPricesDesc", { count: defaultPriced })}</div>
           </div>
-          <Button asChild variant="outline"><Link href="/catalog/products?defaults=1">{t("dash.openCatalog")}</Link></Button>
+          <Button asChild variant="outline"><Link prefetch={false} href="/catalog/products?defaults=1">{t("dash.openCatalog")}</Link></Button>
         </div>
       )}
 
@@ -101,7 +101,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
 
       <div className="grid gap-6 lg:grid-cols-2 xl:grid-cols-3">
         <Card>
-          <CardHeader title={t("dash.topProducts")} action={can(user.role, "reports.view") && <Link href="/reports" className="text-xs font-medium text-gold-700">{t("dash.viewAll")}</Link>} />
+          <CardHeader title={t("dash.topProducts")} action={can(user.role, "reports.view") && <Link prefetch={false} href="/reports" className="text-xs font-medium text-gold-700">{t("dash.viewAll")}</Link>} />
           <CardBody className="space-y-3">
             {rep.byProduct.length === 0 ? <p className="text-sm text-muted">{t("dash.noData")}</p> : rep.byProduct.slice(0, 7).map((p, i) => (
               <div key={p.id} className="flex items-center gap-3">
@@ -116,7 +116,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
           </CardBody>
         </Card>
         <Card>
-          <CardHeader title={<span className="flex items-center gap-2"><AlertTriangle className="size-4 text-warn" />{t("dash.lowStock")}</span>} action={<Link href="/inventory?status=low" className="text-xs font-medium text-gold-700">{t("dash.viewAll")}</Link>} />
+          <CardHeader title={<span className="flex items-center gap-2"><AlertTriangle className="size-4 text-warn" />{t("dash.lowStock")}</span>} action={<Link prefetch={false} href="/inventory?status=low" className="text-xs font-medium text-gold-700">{t("dash.viewAll")}</Link>} />
           <CardBody className="space-y-2.5">
             {low.length === 0 ? <EmptyState title={t("dash.allGood")} /> : low.map((v) => (
               <div key={v.id} className="flex items-center justify-between gap-3 text-sm">
@@ -127,7 +127,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
           </CardBody>
         </Card>
         <Card>
-          <CardHeader title={<span className="flex items-center gap-2"><CalendarClock className="size-4 text-danger" />{t("dash.expiring")}</span>} action={<Link href="/inventory/lots" className="text-xs font-medium text-gold-700">{t("dash.viewAll")}</Link>} />
+          <CardHeader title={<span className="flex items-center gap-2"><CalendarClock className="size-4 text-danger" />{t("dash.expiring")}</span>} action={<Link prefetch={false} href="/inventory/lots" className="text-xs font-medium text-gold-700">{t("dash.viewAll")}</Link>} />
           <CardBody className="space-y-2.5">
             {expiring.length === 0 ? <EmptyState title={t("dash.allGood")} /> : expiring.map((l) => {
               const days = Math.round((l.expiryDate!.getTime() - Date.now()) / 86400000);

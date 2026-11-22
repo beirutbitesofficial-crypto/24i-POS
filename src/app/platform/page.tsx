@@ -30,7 +30,7 @@ export default async function PlatformPage() {
                 const s = sales.find((x) => x.organizationId === o.id);
                 return (
                   <TR key={o.id}>
-                    <TD><Link href={`/platform/${o.id}`} className="font-semibold text-ink-900 hover:text-gold-700">{locale === "ar" ? o.nameAr || o.name : o.name}</Link></TD>
+                    <TD><Link prefetch={false} href={`/platform/${o.id}`} className="font-semibold text-ink-900 hover:text-gold-700">{locale === "ar" ? o.nameAr || o.name : o.name}</Link></TD>
                     <TD className="num text-xs text-muted">{o.slug}</TD>
                     <TD><div className="flex flex-wrap gap-1">{o.modules.map((m) => <Badge key={m}>{t(`plat.module.${m}` as "plat.module.pos")}</Badge>)}</div></TD>
                     <TD className="num">{o._count.users}</TD>

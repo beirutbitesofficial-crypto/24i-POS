@@ -291,7 +291,7 @@ export function PosClient({
           {heldCount > 0 && <span className="num absolute -top-0.5 grid size-5 place-items-center rounded-full bg-gold-500 text-[10px] font-bold text-ink-950 end-0">{heldCount}</span>}
         </Button>
         <Button asChild variant="ghost" className="text-ink-300 hover:bg-ink-800 hover:text-ivory-50">
-          <Link href={user.canBackOffice ? "/dashboard" : "/shifts"}>{user.canBackOffice ? <LayoutDashboard className="size-5" /> : <Wallet className="size-5" />}<span className="hidden xl:inline">{user.canBackOffice ? t("pos.backOffice") : t("shift.my")}</span></Link>
+          <Link prefetch={false} href={user.canBackOffice ? "/dashboard" : "/shifts"}>{user.canBackOffice ? <LayoutDashboard className="size-5" /> : <Wallet className="size-5" />}<span className="hidden xl:inline">{user.canBackOffice ? t("pos.backOffice") : t("shift.my")}</span></Link>
         </Button>
         <LanguageSwitch dark className="hidden sm:inline-flex" />
         <UserMenu name={user.name} role={user.role} dark />

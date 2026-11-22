@@ -53,7 +53,7 @@ export default async function SalesPage({ searchParams }: { searchParams: Promis
               <tbody>
                 {rows.map((s) => (
                   <TR key={s.id}>
-                    <TD><Link href={`/sales/${s.id}`} className="num font-semibold text-gold-700 hover:underline">#{s.number}</Link></TD>
+                    <TD><Link prefetch={false} href={`/sales/${s.id}`} className="num font-semibold text-gold-700 hover:underline">#{s.number}</Link></TD>
                     <TD className="num text-xs text-muted">{s.createdAt.toLocaleString(locale === "ar" ? "ar-LB" : "en-GB")}</TD>
                     <TD>{s.cashier.name}</TD>
                     <TD className="num">{s._count.items}</TD>
