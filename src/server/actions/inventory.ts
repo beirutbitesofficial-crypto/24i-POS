@@ -1,6 +1,6 @@
 "use server";
 import { z } from "zod";
-import { db } from "@/lib/db";
+import { db, tbl } from "@/lib/db";
 import { D, Decimal, money, qty3 } from "@/lib/money";
 import { orgAction, BusinessError } from "../action";
 import { audit } from "../audit";
@@ -170,7 +170,7 @@ export const saveCount = orgAction(
 export const postCount = orgAction("inventory.manage", z.object({ countId: z.string() }), async ({ countId }, user) => {
   const orgId = user.organizationId;
   return db.$transaction(async (tx) => {
-    await tx.$queryRaw`SELECT id FROM "StockCount" WHERE id = ${countId} AND "organizationId" = ${orgId} FOR UPDATE`;
+    await tx.$queryRaw`SELECT id FROM ${tbl("StockCount")} WHERE id = ${countId} AND "organizationId" = ${orgId} FOR UPDATE`;
     const count = await tx.stockCount.findFirst({ where: { id: countId, organizationId: orgId }, include: { items: { where: { countedQty: { not: null } } } } });
     if (!count || count.status !== "OPEN") throw new BusinessError("COUNT_NOT_OPEN");
     const locked = await lockVariants(tx, orgId, count.items.map((i) => i.variantId));

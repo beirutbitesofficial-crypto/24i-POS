@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Boxes, Download, AlertTriangle } from "lucide-react";
 import type { Prisma } from "@prisma/client";
-import { db } from "@/lib/db";
+import { db, tbl } from "@/lib/db";
 import { requirePageOrgUser } from "@/lib/auth";
 import { can } from "@/lib/permissions";
 import { getI18n } from "@/lib/i18n/server";
@@ -35,7 +35,7 @@ export default async function InventoryPage({ searchParams }: { searchParams: Pr
       orderBy: [{ product: { category: { sortOrder: "asc" } } }, { product: { sortOrder: "asc" } }, { sortOrder: "asc" }],
     }),
     canCost
-      ? db.$queryRaw<{ v: string | null }[]>`SELECT SUM("quantityLeft" * "unitCost")::text AS v FROM "InventoryLot" WHERE "organizationId" = ${orgId} AND "quantityLeft" > 0`
+      ? db.$queryRaw<{ v: string | null }[]>`SELECT SUM("quantityLeft" * "unitCost")::text AS v FROM ${tbl("InventoryLot")} WHERE "organizationId" = ${orgId} AND "quantityLeft" > 0`
       : Promise.resolve([{ v: null }]),
   ]);
   const status = (v: (typeof variants)[number]) => {

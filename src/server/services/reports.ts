@@ -1,6 +1,6 @@
 import "server-only";
 import { Prisma } from "@prisma/client";
-import { db } from "@/lib/db";
+import { db, tbl } from "@/lib/db";
 import { D, Decimal } from "@/lib/money";
 
 /**
@@ -27,15 +27,15 @@ export async function salesReport(organizationId: string, from: Date, to: Date) 
            COALESCE(SUM(s."taxTotal"),0) AS tax,
            COALESCE(SUM(s."costTotal"),0) AS cost,
            COALESCE(SUM(s."total" * s."exchangeRate"),0) AS "totalLbp"
-    FROM "Sale" s WHERE ${range}`,
+    FROM ${tbl("Sale")} s WHERE ${range}`,
     db.$queryRaw<Row[]>`
     SELECT COUNT(*)::int AS count, COALESCE(SUM(r."total"),0) AS total, COALESCE(SUM(r."costTotal"),0) AS cost
-    FROM "Refund" r WHERE r."organizationId" = ${organizationId} AND r."createdAt" >= ${from} AND r."createdAt" < ${to}`,
+    FROM ${tbl("Refund")} r WHERE r."organizationId" = ${organizationId} AND r."createdAt" >= ${from} AND r."createdAt" < ${to}`,
     db.$queryRaw<Row[]>`
     SELECT c."id", c."nameEn", c."nameAr",
            COALESCE(SUM(si."lineTotal" * ${NET}),0) AS revenue,
            COALESCE(SUM(si."costTotal" * ${NET}),0) AS cost
-    FROM "SaleItem" si JOIN "Sale" s ON s."id" = si."saleId" JOIN "Category" c ON c."id" = si."categoryId"
+    FROM ${tbl("SaleItem")} si JOIN ${tbl("Sale")} s ON s."id" = si."saleId" JOIN ${tbl("Category")} c ON c."id" = si."categoryId"
     WHERE ${range} GROUP BY c."id" ORDER BY revenue DESC`,
     db.$queryRaw<Row[]>`
     SELECT si."variantId" AS id, MAX(si."nameEn") AS "nameEn", MAX(si."nameAr") AS "nameAr",
@@ -43,27 +43,27 @@ export async function salesReport(organizationId: string, from: Date, to: Date) 
            COALESCE(SUM(si."quantity" - si."refundedQty"),0) AS qty,
            COALESCE(SUM(si."lineTotal" * ${NET}),0) AS revenue,
            COALESCE(SUM(si."costTotal" * ${NET}),0) AS cost
-    FROM "SaleItem" si JOIN "Sale" s ON s."id" = si."saleId"
+    FROM ${tbl("SaleItem")} si JOIN ${tbl("Sale")} s ON s."id" = si."saleId"
     WHERE ${range} GROUP BY si."variantId" ORDER BY revenue DESC LIMIT 200`,
     db.$queryRaw<Row[]>`
     SELECT si."brandName" AS name,
            COALESCE(SUM(si."lineTotal" * ${NET}),0) AS revenue,
            COALESCE(SUM(si."costTotal" * ${NET}),0) AS cost
-    FROM "SaleItem" si JOIN "Sale" s ON s."id" = si."saleId"
+    FROM ${tbl("SaleItem")} si JOIN ${tbl("Sale")} s ON s."id" = si."saleId"
     WHERE ${range} GROUP BY si."brandName" ORDER BY revenue DESC`,
     db.$queryRaw<Row[]>`
     SELECT u."id", u."name", COUNT(*)::int AS orders, COALESCE(SUM(s."total"),0) AS revenue,
            COALESCE(SUM(s."discountTotal"),0) AS discounts
-    FROM "Sale" s JOIN "User" u ON u."id" = s."cashierId"
+    FROM ${tbl("Sale")} s JOIN ${tbl("User")} u ON u."id" = s."cashierId"
     WHERE ${range} GROUP BY u."id" ORDER BY revenue DESC`,
     db.$queryRaw<Row[]>`
     SELECT p."method", p."currency", COALESCE(SUM(p."amount"),0) AS amount, COALESCE(SUM(p."amountBase"),0) AS base
-    FROM "Payment" p JOIN "Sale" s ON s."id" = p."saleId"
+    FROM ${tbl("Payment")} p JOIN ${tbl("Sale")} s ON s."id" = p."saleId"
     WHERE ${range} GROUP BY p."method", p."currency" ORDER BY base DESC`,
     db.$queryRaw<Row[]>`
     SELECT to_char(date_trunc('day', s."createdAt"), 'YYYY-MM-DD') AS day, COUNT(*)::int AS orders,
            COALESCE(SUM(s."total"),0) AS revenue, COALESCE(SUM(s."costTotal"),0) AS cost
-    FROM "Sale" s WHERE ${range} GROUP BY 1 ORDER BY 1`,
+    FROM ${tbl("Sale")} s WHERE ${range} GROUP BY 1 ORDER BY 1`,
   ]);
   const summary = summaryRows[0];
   const refunds = refundsRows[0];

@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import { Prisma, PrismaClient } from "@prisma/client";
 
 const globalForPrisma = globalThis as unknown as { prisma?: PrismaClient };
 
@@ -42,3 +42,20 @@ export const db = globalForPrisma.prisma ?? create();
 if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = db;
 
 export type Tx = Parameters<Parameters<typeof db.$transaction>[0]>[0];
+
+/**
+ * Schema holding the app tables (from DATABASE_URL ?schema=…, default "public").
+ * Prisma model queries qualify tables automatically; raw SQL must do it explicitly,
+ * because poolers in transaction mode don't keep a per-connection search_path.
+ */
+export const DB_SCHEMA = (() => {
+  try {
+    const v = new URL(process.env.DATABASE_URL ?? "").searchParams.get("schema");
+    return v && /^[A-Za-z_][A-Za-z0-9_]*$/.test(v) ? v : "public";
+  } catch {
+    return "public";
+  }
+})();
+
+/** Schema-qualified table name for raw SQL: tbl("Sale") → "pos"."Sale" */
+export const tbl = (name: string) => Prisma.raw(`"${DB_SCHEMA}"."${name}"`);

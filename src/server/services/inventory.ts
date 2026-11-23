@@ -7,7 +7,7 @@
  * Quantities are always in the variant's stock unit (kg for weight items).
  */
 import { Prisma, type MovementType } from "@prisma/client";
-import type { Tx } from "@/lib/db";
+import { tbl, type Tx } from "@/lib/db";
 import { D, Decimal, qty3 } from "@/lib/money";
 import { BusinessError } from "../action";
 
@@ -25,9 +25,9 @@ export async function lockVariants(tx: Tx, organizationId: string, variantIds: s
   if (!ids.length) return new Map();
   const rows = await tx.$queryRaw<{ id: string; stockQty: Prisma.Decimal; cost: Prisma.Decimal | null; nameEn: string; allowsDecimal: boolean }[]>`
     SELECT v."id", v."stockQty", v."cost", p."nameEn", u."allowsDecimal"
-    FROM "ProductVariant" v
-    JOIN "Product" p ON p."id" = v."productId"
-    JOIN "Unit" u ON u."id" = v."unitId"
+    FROM ${tbl("ProductVariant")} v
+    JOIN ${tbl("Product")} p ON p."id" = v."productId"
+    JOIN ${tbl("Unit")} u ON u."id" = v."unitId"
     WHERE v."organizationId" = ${organizationId} AND v."id" IN (${Prisma.join(ids)})
     ORDER BY v."id"
     FOR UPDATE OF v`;

@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { Prisma } from "@prisma/client";
-import { db } from "@/lib/db";
+import { db, tbl } from "@/lib/db";
 import { D, Decimal, money, qty3, roundLbp, type RoundingMode } from "@/lib/money";
 import { priceCart, settle, tenderToBase } from "@/lib/pricing";
 import { authorize, type OrgUser } from "@/lib/auth";
@@ -198,7 +198,7 @@ export async function createRefund(user: OrgUser, input: RefundInput) {
   const settings = await db.storeSettings.findUniqueOrThrow({ where: { organizationId: orgId } });
 
   return db.$transaction(async (tx) => {
-    await tx.$queryRaw`SELECT id FROM "Sale" WHERE id = ${input.saleId} AND "organizationId" = ${orgId} FOR UPDATE`;
+    await tx.$queryRaw`SELECT id FROM ${tbl("Sale")} WHERE id = ${input.saleId} AND "organizationId" = ${orgId} FOR UPDATE`;
     const sale = await tx.sale.findFirst({ where: { id: input.saleId, organizationId: orgId }, include: { items: true } });
     if (!sale) throw new BusinessError("NOT_FOUND");
 
