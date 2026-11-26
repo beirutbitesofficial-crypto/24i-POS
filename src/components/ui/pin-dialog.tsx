@@ -18,7 +18,7 @@ export function PinDialog({ open, onOpenChange, onSubmit, busy }: { open: boolea
         <input
           ref={ref} value={pin} inputMode="numeric" autoComplete="off" type="password"
           onChange={(e) => setPin(e.target.value.replace(/\D/g, "").slice(0, 6))}
-          className="num mb-4 h-14 w-full rounded-xl border border-ivory-300 bg-white text-center text-3xl tracking-[0.5em] focus:border-gold-400 focus:outline-none"
+          className="num mb-4 h-14 w-full rounded-xl border border-ivory-300 bg-ivory-50 text-center text-3xl tracking-[0.5em] focus:border-gold-400 focus:outline-none"
         />
         <div className="grid grid-cols-3 gap-2" dir="ltr">
           {["1", "2", "3", "4", "5", "6", "7", "8", "9"].map((d) => (

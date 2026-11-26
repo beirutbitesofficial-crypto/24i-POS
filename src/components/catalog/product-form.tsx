@@ -76,7 +76,7 @@ export function ProductGeneralForm({ product, categories, brands }: { product: P
           <Textarea value={f.description ?? ""} onChange={(e) => setF({ ...f, description: e.target.value })} />
         </Field>
         <div className="sm:col-span-2">
-          <div className="mb-1.5 text-xs font-semibold text-ink-700">{t("cat.availableBrands")}</div>
+          <div className="mb-1.5 text-xs font-semibold text-fg-2">{t("cat.availableBrands")}</div>
           <p className="mb-3 text-xs text-muted">{t("cat.availableBrandsHint")}</p>
           <div className="flex flex-wrap gap-2">
             {brands.map((b) => {
@@ -84,7 +84,7 @@ export function ProductGeneralForm({ product, categories, brands }: { product: P
               return (
                 <button key={b.id} type="button" onClick={() => toggleBrand(b.id)}
                   className={cn("inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-sm transition",
-                    on ? "border-gold-400 bg-gold-50 text-gold-700" : "border-ivory-300 bg-ivory-50 text-ink-700 hover:bg-ivory-200")}>
+                    on ? "border-gold-400 bg-gold-50 text-gold-700" : "border-ivory-300 bg-ivory-50 text-fg-2 hover:bg-ivory-200")}>
                   {on && <Check className="size-3.5" />}{b.name}
                 </button>
               );

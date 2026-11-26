@@ -60,12 +60,12 @@ export function AssistantChat({ suggestions }: { suggestions: string[] }) {
   };
 
   return (
-    <div className="flex h-[calc(100dvh-13rem)] min-h-[480px] flex-col overflow-hidden rounded-2xl border border-ivory-300 bg-white">
+    <div className="flex h-[calc(100dvh-13rem)] min-h-[480px] flex-col overflow-hidden rounded-2xl border border-ivory-300 bg-ivory-50">
       <div className="flex-1 space-y-4 overflow-y-auto p-4 sm:p-6">
         {turns.length === 0 && (
           <div className="mx-auto flex max-w-xl flex-col items-center py-8 text-center animate-fade-in">
             <div className="lux-brand mb-4 flex size-14 items-center justify-center rounded-2xl text-white shadow-brand"><Sparkles className="size-7" /></div>
-            <h2 className="text-xl font-bold text-ink-900">{t("ai.welcome")}</h2>
+            <h2 className="text-xl font-bold text-fg">{t("ai.welcome")}</h2>
             <p className="mt-1 text-sm text-muted">{t("ai.welcomeSub")}</p>
             <div className="mt-6 flex flex-wrap justify-center gap-2">
               {suggestions.map((s) => (
@@ -78,7 +78,7 @@ export function AssistantChat({ suggestions }: { suggestions: string[] }) {
         {turns.map((m, i) => (
           <div key={i} className={cn("flex animate-slide-in-end", m.role === "user" ? "justify-start" : "justify-end")}>
             <div className={cn("max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-relaxed",
-              m.role === "user" ? "bg-ink-900 text-white" : m.error ? "border border-danger/30 bg-danger/5 text-danger" : "border border-ivory-300 bg-ivory-100 text-ink-900")}>
+              m.role === "user" ? "bg-ink-900 text-white" : m.error ? "border border-danger/30 bg-danger/5 text-danger" : "border border-ivory-300 bg-ivory-100 text-fg")}>
               <Rich text={m.content} />
             </div>
           </div>
@@ -101,7 +101,7 @@ export function AssistantChat({ suggestions }: { suggestions: string[] }) {
         <textarea ref={inputRef} value={input} onChange={(e) => setInput(e.target.value)} rows={1} maxLength={2000} autoFocus
           onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); ask(input); } }}
           placeholder={t("ai.placeholder")}
-          className="max-h-32 min-h-11 flex-1 resize-none rounded-xl border border-ivory-300 bg-white px-4 py-2.5 text-sm focus:border-gold-400 focus:outline-none" />
+          className="max-h-32 min-h-11 flex-1 resize-none rounded-xl border border-ivory-300 bg-ivory-50 px-4 py-2.5 text-sm focus:border-gold-400 focus:outline-none" />
         <Button type="submit" variant="gold" size="icon" disabled={busy || !input.trim()} aria-label={t("ai.send")}><ArrowUp className="size-5" /></Button>
       </form>
     </div>

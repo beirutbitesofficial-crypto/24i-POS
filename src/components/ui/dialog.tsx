@@ -23,10 +23,10 @@ export function Dialog({
         >
           <div className="flex items-start justify-between gap-4 border-b border-ivory-200 px-5 py-4">
             <div>
-              <D.Title className="text-base font-semibold text-ink-900">{title}</D.Title>
+              <D.Title className="text-base font-semibold text-fg">{title}</D.Title>
               {description ? <D.Description className="mt-0.5 text-sm text-muted">{description}</D.Description> : <D.Description className="sr-only">{String(title)}</D.Description>}
             </div>
-            <D.Close className="grid size-8 place-items-center rounded-md text-muted hover:bg-ivory-200 hover:text-ink-900" aria-label="Close">
+            <D.Close className="grid size-8 place-items-center rounded-md text-muted hover:bg-ivory-200 hover:text-fg" aria-label="Close">
               <X className="size-4" />
             </D.Close>
           </div>

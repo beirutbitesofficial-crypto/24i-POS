@@ -80,7 +80,7 @@ export function Sidebar({ perms, modules, storeName, logoUrl }: { perms: string[
           <div className="grid size-10 place-items-center rounded-lg bg-ink-700 font-semibold text-gold-300">{storeName.slice(0, 1)}</div>
         )}
         <div className="min-w-0">
-          <div className="truncate text-sm font-semibold text-ivory-50">{storeName}</div>
+          <div className="truncate text-sm font-semibold text-white">{storeName}</div>
           <div className="text-[11px] text-gold-300/80">{t("app.tagline")}</div>
         </div>
       </div>
@@ -124,7 +124,7 @@ export function Sidebar({ perms, modules, storeName, logoUrl }: { perms: string[
   return (
     <>
       <button
-        className="fixed top-3 z-40 grid size-10 place-items-center rounded-lg bg-ink-900 text-ivory-50 shadow-lg start-3 lg:hidden no-print"
+        className="fixed top-3 z-40 grid size-10 place-items-center rounded-lg bg-ink-900 text-white shadow-lg start-3 lg:hidden no-print"
         onClick={() => setOpen(true)} aria-label="Menu"
       >
         <Menu className="size-5" />

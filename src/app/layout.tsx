@@ -1,15 +1,14 @@
 import type { Metadata, Viewport } from "next";
 import "@fontsource-variable/inter";
-import "@fontsource/ibm-plex-sans-arabic/400.css";
-import "@fontsource/ibm-plex-sans-arabic/500.css";
-import "@fontsource/ibm-plex-sans-arabic/600.css";
-import "@fontsource/ibm-plex-sans-arabic/700.css";
-import "@fontsource/playfair-display/600.css";
+import "@fontsource-variable/alexandria";
+import "@fontsource-variable/el-messiri";
 import "./globals.css";
 import { Toaster } from "sonner";
 import { getI18n } from "@/lib/i18n/server";
 import { I18nProvider } from "@/lib/i18n/client";
 import { Suspense } from "react";
+import { cookies } from "next/headers";
+import { THEME_COOKIE } from "@/lib/theme";
 import { NavProgress } from "@/components/shell/nav-progress";
 
 export const metadata: Metadata = {
@@ -21,8 +20,9 @@ export const viewport: Viewport = { width: "device-width", initialScale: 1, them
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const { locale, dir } = await getI18n();
+  const dark = (await cookies()).get(THEME_COOKIE)?.value === "dark";
   return (
-    <html lang={locale} dir={dir}>
+    <html lang={locale} dir={dir} className={dark ? "dark" : undefined}>
       <body className="min-h-dvh">
         <I18nProvider locale={locale}>
           <Suspense fallback={null}><NavProgress /></Suspense>

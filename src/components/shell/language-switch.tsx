@@ -15,7 +15,7 @@ export function LanguageSwitch({ className, dark }: { className?: string; dark?:
       onClick={async () => { await setLanguageAction(next); router.refresh(); }}
       className={cn(
         "inline-flex h-9 items-center gap-1.5 rounded-lg px-3 text-sm font-medium transition",
-        dark ? "text-ink-300 hover:bg-ink-800 hover:text-ivory-50" : "text-ink-700 hover:bg-ivory-200",
+        dark ? "text-ink-300 hover:bg-ink-800 hover:text-white" : "text-fg-2 hover:bg-ivory-200",
         className,
       )}
     >

@@ -591,6 +591,8 @@ export const en = {
   "ai.q.today": "How are sales today compared to yesterday?",
   "ai.q.lowStock": "What's running low and what should I reorder?",
   "ai.q.bestDay": "Which day of this month had the most sales?",
+  "app.darkMode": "Dark mode",
+  "app.lightMode": "Light mode",
 };
 
 export type DictKey = keyof typeof en;

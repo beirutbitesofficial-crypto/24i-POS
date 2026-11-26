@@ -67,7 +67,7 @@ export function PaymentDialog({
             {methods.map((m) => (
               <button key={m.k} type="button" onClick={() => { setMethod(m.k); if (m.k !== "CASH") setCurrency("USD"); }}
                 className={cn("flex flex-col items-center gap-1 rounded-xl border py-3 text-sm font-medium transition",
-                  method === m.k ? "border-ink-900 bg-ink-900 text-ivory-50" : "border-ivory-300 bg-white text-ink-800 hover:bg-ivory-200")}>
+                  method === m.k ? "border-ink-900 bg-ink-900 text-white" : "border-ivory-300 bg-ivory-50 text-fg hover:bg-ivory-200")}>
                 <m.icon className="size-5" />{m.label}
               </button>
             ))}
@@ -76,12 +76,12 @@ export function PaymentDialog({
             <div className="flex overflow-hidden rounded-xl border border-ivory-300" dir="ltr">
               {(["USD", "LBP"] as const).map((c) => (
                 <button key={c} type="button" onClick={() => setCurrency(c)}
-                  className={cn("h-12 w-20 text-sm font-semibold", currency === c ? "bg-gold-500 text-white" : "bg-white text-ink-700")}>{c === "USD" ? "$ USD" : "LBP"}</button>
+                  className={cn("h-12 w-20 text-sm font-semibold", currency === c ? "bg-gold-500 text-white" : "bg-ivory-50 text-fg-2")}>{c === "USD" ? "$ USD" : "LBP"}</button>
               ))}
             </div>
             <input value={entry} onChange={(e) => setEntry(e.target.value.replace(/[^\d.]/g, ""))} inputMode="decimal" dir="ltr"
               onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); if (entry) add(entry); else if (st.covered) onComplete(tenders, changeCurrency); } }}
-              className="num h-12 min-w-0 flex-1 rounded-xl border border-ivory-300 bg-white px-4 text-2xl font-semibold focus:border-gold-400 focus:outline-none" placeholder="0" autoFocus />
+              className="num h-12 min-w-0 flex-1 rounded-xl border border-ivory-300 bg-ivory-50 px-4 text-2xl font-semibold focus:border-gold-400 focus:outline-none" placeholder="0" autoFocus />
             <Button type="button" size="lg" onClick={() => add(entry)} disabled={!entry}>{t("pos.addPayment")}</Button>
           </div>
           <div className="mb-3 grid grid-cols-2 gap-2">

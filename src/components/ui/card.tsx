@@ -8,7 +8,7 @@ export function CardHeader({ className, title, description, action }: { classNam
   return (
     <div className={cn("flex items-start justify-between gap-4 border-b border-ivory-200 px-5 py-4", className)}>
       <div className="min-w-0">
-        <h3 className="text-[15px] font-semibold text-ink-900">{title}</h3>
+        <h3 className="text-[15px] font-semibold text-fg">{title}</h3>
         {description && <p className="mt-0.5 text-sm text-muted">{description}</p>}
       </div>
       {action}
@@ -21,13 +21,13 @@ export function CardBody({ className, ...props }: React.HTMLAttributes<HTMLDivEl
 
 export function Badge({ className, tone = "neutral", ...props }: React.HTMLAttributes<HTMLSpanElement> & { tone?: "neutral" | "gold" | "success" | "danger" | "warn" | "info" | "dark" }) {
   const tones = {
-    neutral: "bg-ivory-200 text-ink-700",
+    neutral: "bg-ivory-200 text-fg-2",
     gold: "bg-gold-100 text-gold-700",
     success: "bg-success-soft text-success",
     danger: "bg-danger-soft text-danger",
     warn: "bg-warn-soft text-warn",
     info: "bg-info-soft text-info",
-    dark: "bg-ink-900 text-ivory-50",
+    dark: "bg-ink-900 text-white",
   };
   return <span className={cn("inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium whitespace-nowrap", tones[tone], className)} {...props} />;
 }
@@ -37,7 +37,7 @@ export function PageHeader({ title, description, actions, eyebrow }: { title: Re
     <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
       <div className="min-w-0">
         {eyebrow && <div className="mb-1.5 text-[11px] font-semibold tracking-[0.16em] text-gold-600 uppercase">{eyebrow}</div>}
-        <h1 className="font-display text-2xl font-bold tracking-tight text-ink-900 sm:text-[28px]">{title}</h1>
+        <h1 className="font-display text-2xl font-bold tracking-tight text-fg sm:text-[28px]">{title}</h1>
         {description && <p className="mt-1 max-w-2xl text-sm text-muted">{description}</p>}
       </div>
       {actions && <div className="flex flex-wrap items-center gap-2">{actions}</div>}
@@ -49,7 +49,7 @@ export function EmptyState({ icon, title, description, action }: { icon?: React.
   return (
     <div className="flex flex-col items-center justify-center px-6 py-14 text-center">
       {icon && <div className="mb-4 grid size-14 place-items-center rounded-2xl bg-gold-50 text-gold-600 ring-1 ring-gold-100">{icon}</div>}
-      <h3 className="text-base font-semibold text-ink-900">{title}</h3>
+      <h3 className="text-base font-semibold text-fg">{title}</h3>
       {description && <p className="mt-1 max-w-sm text-sm text-muted">{description}</p>}
       {action && <div className="mt-5">{action}</div>}
     </div>

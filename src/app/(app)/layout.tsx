@@ -5,6 +5,7 @@ import { getSettings, mediaUrl } from "@/server/context";
 import { Sidebar } from "@/components/shell/sidebar";
 import { UserMenu } from "@/components/shell/user-menu";
 import { LanguageSwitch } from "@/components/shell/language-switch";
+import { ThemeSwitch } from "@/components/shell/theme-switch";
 import { InstallAppButton } from "@/components/shell/install-app";
 import { formatLbp } from "@/lib/money";
 
@@ -22,7 +23,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
             <span className="num rounded-full border border-ivory-300 bg-ivory-50 px-3 py-1">1 USD = {formatLbp(s.exchangeRate, locale)}</span>
           </div>
           <InstallAppButton />
-          <LanguageSwitch />
+          <ThemeSwitch /><LanguageSwitch />
           <UserMenu name={user.name} role={user.role} />
         </header>
         <main className="mx-auto max-w-[1400px] px-4 py-6 sm:px-8 sm:py-8">{children}</main>

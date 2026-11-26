@@ -13,7 +13,7 @@ export function UserMenu({ name, role, dark }: { name: string; role: string; dar
         <button className={`flex items-center gap-2 rounded-lg px-2 py-1.5 text-start transition ${dark ? "hover:bg-ink-800" : "hover:bg-ivory-200"}`}>
           <div className="grid size-8 place-items-center rounded-full bg-gold-100 text-gold-700"><UserRound className="size-4" /></div>
           <div className="hidden leading-tight sm:block">
-            <div className={`text-sm font-medium ${dark ? "text-ivory-50" : "text-ink-900"}`}>{name}</div>
+            <div className={`text-sm font-medium ${dark ? "text-white" : "text-fg"}`}>{name}</div>
             <div className={`text-[11px] ${dark ? "text-ink-300" : "text-muted"}`}>{t(`role.${role}` as DictKey)}</div>
           </div>
           <ChevronDown className={`size-4 ${dark ? "text-ink-300" : "text-muted"}`} />

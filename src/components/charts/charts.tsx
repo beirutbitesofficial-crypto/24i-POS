@@ -12,12 +12,12 @@ export function TrendBars({ data, valueLabel }: { data: { label: string; value: 
     <div className="h-64 w-full" dir="ltr">
       <ResponsiveContainer width="100%" height="100%">
         <BarChart data={data} margin={{ top: 8, right: 8, left: 0, bottom: 0 }} barCategoryGap={6}>
-          <CartesianGrid vertical={false} stroke="#e5e7eb" strokeDasharray="0" />
-          <XAxis dataKey="label" tickLine={false} axisLine={{ stroke: "#d1d5db" }} tick={{ fontSize: 11, fill: "#6b7080" }} reversed={dir === "rtl"} interval="preserveStartEnd" />
-          <YAxis tickLine={false} axisLine={false} tick={{ fontSize: 11, fill: "#6b7080" }} tickFormatter={fmt} width={56} orientation={dir === "rtl" ? "right" : "left"} />
+          <CartesianGrid vertical={false} stroke="var(--color-ivory-300)" strokeDasharray="0" />
+          <XAxis dataKey="label" tickLine={false} axisLine={{ stroke: "var(--color-ivory-400)" }} tick={{ fontSize: 11, fill: "var(--color-muted)" }} reversed={dir === "rtl"} interval="preserveStartEnd" />
+          <YAxis tickLine={false} axisLine={false} tick={{ fontSize: 11, fill: "var(--color-muted)" }} tickFormatter={fmt} width={56} orientation={dir === "rtl" ? "right" : "left"} />
           <Tooltip
             cursor={{ fill: "rgba(0,140,140,0.08)" }}
-            contentStyle={{ borderRadius: 12, border: "1px solid #e5e7eb", background: "#ffffff", boxShadow: "0 12px 32px -12px rgb(16 24 40 / 0.25)", fontSize: 12 }}
+            contentStyle={{ borderRadius: 12, border: "1px solid var(--color-ivory-300)", background: "var(--color-ivory-50)", color: "var(--color-text)", boxShadow: "0 12px 32px -12px rgb(16 24 40 / 0.25)", fontSize: 12 }}
             formatter={(v: number) => [fmt(v), valueLabel]}
             labelFormatter={(l, p) => (p?.[0]?.payload?.sub ? `${l} · ${p[0].payload.sub}` : String(l))}
           />
@@ -36,8 +36,8 @@ export function ShareBars({ rows }: { rows: { label: string; value: number; disp
       {rows.map((r) => (
         <li key={r.label} title={`${r.label}: ${r.display}`}>
           <div className="mb-1 flex justify-between gap-3 text-sm">
-            <span className="truncate text-ink-800">{r.label}</span>
-            <span className="num shrink-0 font-medium text-ink-900">{r.display}</span>
+            <span className="truncate text-fg">{r.label}</span>
+            <span className="num shrink-0 font-medium text-fg">{r.display}</span>
           </div>
           <div className="h-2.5 rounded-full bg-ivory-200">
             <div className="h-2.5 rounded-full" style={{ width: `${Math.max(2, (r.value / max) * 100)}%`, background: SERIES }} />

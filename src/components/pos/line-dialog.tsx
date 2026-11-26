@@ -51,11 +51,11 @@ export function LineDialog({
       <div className="space-y-5">
         {isWeight ? (
           <div>
-            <div className="mb-2 flex items-center gap-2 text-sm font-semibold text-ink-700"><Scale className="size-4 text-gold-600" />{t("pos.weight")} (g)</div>
+            <div className="mb-2 flex items-center gap-2 text-sm font-semibold text-fg-2"><Scale className="size-4 text-gold-600" />{t("pos.weight")} (g)</div>
             <div className="mb-2 grid grid-cols-4 gap-2" dir="ltr">
               {QUICK.map((g) => (
                 <button key={g} type="button" onClick={() => onWeight(String(g))}
-                  className={cn("num rounded-lg border py-2.5 text-sm font-semibold", D(l.quantity).eq(D(g).div(1000)) ? "border-gold-500 bg-gold-100 text-gold-700" : "border-ivory-300 bg-white")}>
+                  className={cn("num rounded-lg border py-2.5 text-sm font-semibold", D(l.quantity).eq(D(g).div(1000)) ? "border-gold-500 bg-gold-100 text-gold-700" : "border-ivory-300 bg-ivory-50")}>
                   {g === 1000 ? "1 kg" : `${g} g`}
                 </button>
               ))}
@@ -65,7 +65,7 @@ export function LineDialog({
           </div>
         ) : (
           <div>
-            <div className="mb-2 text-sm font-semibold text-ink-700">{t("pos.qty")}</div>
+            <div className="mb-2 text-sm font-semibold text-fg-2">{t("pos.qty")}</div>
             <div className="flex items-center gap-3" dir="ltr">
               <Button type="button" variant="outline" size="lg" className="w-16" onClick={() => step(-1)}><Minus className="size-5" /></Button>
               <Input inputMode="numeric" className="num h-12 text-center text-2xl font-semibold" value={l.quantity}
@@ -76,12 +76,12 @@ export function LineDialog({
         )}
 
         <div>
-          <div className="mb-2 text-sm font-semibold text-ink-700">{t("pos.lineDiscount")}</div>
+          <div className="mb-2 text-sm font-semibold text-fg-2">{t("pos.lineDiscount")}</div>
           <div className="flex gap-2">
             <div className="flex overflow-hidden rounded-lg border border-ivory-300">
               {(["PERCENT", "AMOUNT"] as const).map((k) => (
                 <button key={k} type="button" onClick={() => setL({ ...l, discountType: k })}
-                  className={cn("px-3 text-sm", (l.discountType ?? "PERCENT") === k ? "bg-ink-900 text-ivory-50" : "bg-white")}>{k === "PERCENT" ? "%" : "$"}</button>
+                  className={cn("px-3 text-sm", (l.discountType ?? "PERCENT") === k ? "bg-ink-900 text-white" : "bg-ivory-50")}>{k === "PERCENT" ? "%" : "$"}</button>
               ))}
             </div>
             <Input dir="ltr" inputMode="decimal" placeholder="0" value={l.discountValue ?? ""}

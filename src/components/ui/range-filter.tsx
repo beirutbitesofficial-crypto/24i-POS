@@ -26,7 +26,7 @@ export function RangeFilter({ from, to }: { from: string; to: string }) {
       <div className="flex rounded-xl border border-ivory-300 bg-ivory-50 p-1">
         {keys.map(([k, label]) => (
           <button key={k} onClick={() => go({ range: k, from: null, to: null })}
-            className={cn("rounded-lg px-3 py-1.5 text-sm transition", current === k ? "bg-ink-900 text-ivory-50" : "text-ink-700 hover:bg-ivory-200")}>{t(label)}</button>
+            className={cn("rounded-lg px-3 py-1.5 text-sm transition", current === k ? "bg-ink-900 text-white" : "text-fg-2 hover:bg-ivory-200")}>{t(label)}</button>
         ))}
       </div>
       <div className="flex items-center gap-1.5">

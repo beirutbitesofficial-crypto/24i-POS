@@ -576,4 +576,6 @@ export const ar: Record<keyof typeof en, string> = {
   "ai.q.today": "كيف المبيعات اليوم مقارنة مع مبارح؟",
   "ai.q.lowStock": "شو عم يخلص وشو لازم اطلب؟",
   "ai.q.bestDay": "أي يوم بهالشهر كان فيه أعلى مبيعات؟",
+  "app.darkMode": "الوضع الداكن",
+  "app.lightMode": "الوضع الفاتح",
 };

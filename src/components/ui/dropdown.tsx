@@ -12,6 +12,6 @@ export function DropdownContent({ className, ...props }: DM.DropdownMenuContentP
   );
 }
 export function DropdownItem({ className, ...props }: DM.DropdownMenuItemProps) {
-  return <DM.Item className={cn("flex cursor-pointer items-center gap-2 rounded-lg px-3 py-2 text-sm text-ink-800 outline-none transition-colors data-[highlighted]:bg-ivory-200", className)} {...props} />;
+  return <DM.Item className={cn("flex cursor-pointer items-center gap-2 rounded-lg px-3 py-2 text-sm text-fg outline-none transition-colors data-[highlighted]:bg-ivory-200", className)} {...props} />;
 }
 export const DropdownSeparator = () => <DM.Separator className="my-1 h-px bg-ivory-200" />;

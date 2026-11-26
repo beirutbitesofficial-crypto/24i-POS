@@ -35,7 +35,7 @@ export function ImportCsvButton() {
         </>}
       >
         <input type="file" accept=".csv,text/csv" onChange={(e) => setFile(e.target.files?.[0] ?? null)}
-          className="block w-full rounded-lg border border-dashed border-ivory-400 bg-ivory-100 p-6 text-sm file:me-3 file:rounded-md file:border-0 file:bg-ink-900 file:px-3 file:py-1.5 file:text-ivory-50" />
+          className="block w-full rounded-lg border border-dashed border-ivory-400 bg-ivory-100 p-6 text-sm file:me-3 file:rounded-md file:border-0 file:bg-ink-900 file:px-3 file:py-1.5 file:text-white" />
         <p className="mt-3 text-xs text-muted" dir="ltr">sku, price, wholesale_price, cost, min_stock, reorder_qty, active</p>
       </Dialog>
     </>

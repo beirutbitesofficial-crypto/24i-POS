@@ -76,9 +76,9 @@ export default async function ProductsPage({ searchParams }: { searchParams: Pro
       <div className="mb-4 flex flex-col gap-3 lg:flex-row lg:items-center">
         <SearchBox placeholder={t("cat.searchProducts")} className="lg:w-80" />
         <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-thin">
-          <Link prefetch={false} href={href({ category: undefined })} className={cn(chip, !sp.category ? "border-ink-900 bg-ink-900 text-ivory-50" : "border-ivory-300 bg-ivory-50 hover:bg-ivory-200")}>{t("common.all")}</Link>
+          <Link prefetch={false} href={href({ category: undefined })} className={cn(chip, !sp.category ? "border-ink-900 bg-ink-900 text-white" : "border-ivory-300 bg-ivory-50 hover:bg-ivory-200")}>{t("common.all")}</Link>
           {categories.map((c) => (
-            <Link prefetch={false} key={c.id} href={href({ category: c.id })} className={cn(chip, sp.category === c.id ? "border-ink-900 bg-ink-900 text-ivory-50" : "border-ivory-300 bg-ivory-50 hover:bg-ivory-200")}>{ln(locale, c)}</Link>
+            <Link prefetch={false} key={c.id} href={href({ category: c.id })} className={cn(chip, sp.category === c.id ? "border-ink-900 bg-ink-900 text-white" : "border-ivory-300 bg-ivory-50 hover:bg-ivory-200")}>{ln(locale, c)}</Link>
           ))}
           <Link prefetch={false} href={href({ setup: sp.setup === "1" ? undefined : "1" })} className={cn(chip, "inline-flex items-center gap-1", sp.setup === "1" ? "border-warn bg-warn text-white" : "border-warn/40 bg-warn-soft text-warn")}>
             <AlertTriangle className="size-3.5" />{t("cat.filterSetup")}
@@ -114,7 +114,7 @@ export default async function ProductsPage({ searchParams }: { searchParams: Pro
                           <div className="grid size-10 place-items-center rounded-lg bg-ivory-200 text-ink-400"><ImageIcon className="size-4" /></div>
                         )}
                         <div>
-                          <div className="font-medium text-ink-900 hover:text-gold-700">{ln(locale, p)}</div>
+                          <div className="font-medium text-fg hover:text-gold-700">{ln(locale, p)}</div>
                           <div className="text-xs text-muted">{locale === "ar" ? p.nameEn : p.nameAr}</div>
                         </div>
                       </Link>

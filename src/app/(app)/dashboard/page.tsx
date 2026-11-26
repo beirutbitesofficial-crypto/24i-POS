@@ -58,10 +58,10 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
 
       {(unpriced > 0 || noVariant > 0) && (
         <div className="mb-6 flex flex-wrap items-center gap-4 rounded-2xl border border-warn/30 bg-warn-soft px-5 py-4">
-          <div className="grid size-10 place-items-center rounded-xl bg-white/60 text-warn"><Settings2 className="size-5" /></div>
+          <div className="grid size-10 place-items-center rounded-xl bg-white/60 dark:bg-white/5 text-warn"><Settings2 className="size-5" /></div>
           <div className="min-w-0 flex-1">
             <div className="font-semibold text-warn">{t("dash.needsSetup")}</div>
-            <div className="text-sm text-ink-700">{t("dash.needsSetupDesc", { count: unpriced, products: noVariant })}</div>
+            <div className="text-sm text-fg-2">{t("dash.needsSetupDesc", { count: unpriced, products: noVariant })}</div>
           </div>
           {can(user.role, "catalog.manage") && <Button asChild variant="outline"><Link prefetch={false} href="/catalog/products?setup=1">{t("dash.openCatalog")}</Link></Button>}
         </div>
@@ -69,10 +69,10 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
 
       {defaultPriced > 0 && can(user.role, "catalog.manage") && (
         <div className="mb-6 flex flex-wrap items-center gap-4 rounded-2xl border border-info/25 bg-info-soft px-5 py-4">
-          <div className="grid size-10 place-items-center rounded-xl bg-white/60 text-info"><Tag className="size-5" /></div>
+          <div className="grid size-10 place-items-center rounded-xl bg-white/60 dark:bg-white/5 text-info"><Tag className="size-5" /></div>
           <div className="min-w-0 flex-1">
             <div className="font-semibold text-info">{t("dash.defaultPrices")}</div>
-            <div className="text-sm text-ink-700">{t("dash.defaultPricesDesc", { count: defaultPriced })}</div>
+            <div className="text-sm text-fg-2">{t("dash.defaultPricesDesc", { count: defaultPriced })}</div>
           </div>
           <Button asChild variant="outline"><Link prefetch={false} href="/catalog/products?defaults=1">{t("dash.openCatalog")}</Link></Button>
         </div>

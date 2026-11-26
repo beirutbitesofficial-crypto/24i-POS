@@ -44,7 +44,7 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
 
   return (
     <>
-      <Link prefetch={false} href="/catalog/products" className="mb-3 inline-flex items-center gap-1 text-sm text-muted hover:text-ink-900">
+      <Link prefetch={false} href="/catalog/products" className="mb-3 inline-flex items-center gap-1 text-sm text-muted hover:text-fg">
         <ArrowLeft className="size-4 rtl:rotate-180" />{t("cat.products")}
       </Link>
       <PageHeader eyebrow={ln(locale, categories.find((c) => c.id === product.categoryId))} title={ln(locale, product)} description={locale === "ar" ? product.nameEn : product.nameAr} />

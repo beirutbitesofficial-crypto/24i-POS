@@ -53,10 +53,10 @@ export function WeightDialog({
         <div className="mb-3 flex gap-2" dir="ltr">
           <input ref={ref} value={raw} inputMode="decimal" autoComplete="off"
             onChange={(e) => setRaw(e.target.value.replace(/[^\d.]/g, ""))}
-            className="num h-14 min-w-0 flex-1 rounded-xl border border-ivory-300 bg-white px-4 text-3xl font-semibold focus:border-gold-400 focus:outline-none" placeholder="0" />
+            className="num h-14 min-w-0 flex-1 rounded-xl border border-ivory-300 bg-ivory-50 px-4 text-3xl font-semibold focus:border-gold-400 focus:outline-none" placeholder="0" />
           <div className="flex overflow-hidden rounded-xl border border-ivory-300">
             {(["g", "kg"] as const).map((u) => (
-              <button key={u} type="button" onClick={() => setUnit(u)} className={cn("w-14 text-base font-medium", unit === u ? "bg-ink-900 text-ivory-50" : "bg-white text-ink-700")}>{u}</button>
+              <button key={u} type="button" onClick={() => setUnit(u)} className={cn("w-14 text-base font-medium", unit === u ? "bg-ink-900 text-white" : "bg-ivory-50 text-fg-2")}>{u}</button>
             ))}
           </div>
         </div>

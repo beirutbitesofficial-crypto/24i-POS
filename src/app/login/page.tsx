@@ -3,6 +3,7 @@ import { getCurrentUser } from "@/lib/auth";
 import { getI18n } from "@/lib/i18n/server";
 import { BrandMark } from "@/components/shell/brand-mark";
 import { LanguageSwitch } from "@/components/shell/language-switch";
+import { ThemeSwitch } from "@/components/shell/theme-switch";
 import { InstallAppButton } from "@/components/shell/install-app";
 import { LoginForm } from "./login-form";
 
@@ -27,11 +28,11 @@ export default async function LoginPage() {
       <section className="flex flex-col">
         <div className="flex justify-between p-5">
           <div className="lg:hidden"><BrandMark /></div>
-          <div className="ms-auto flex items-center gap-1"><InstallAppButton /><LanguageSwitch /></div>
+          <div className="ms-auto flex items-center gap-1"><InstallAppButton /><ThemeSwitch /><LanguageSwitch /></div>
         </div>
         <div className="flex flex-1 items-center justify-center px-6 pb-16">
           <div className="w-full max-w-sm">
-            <h1 className="font-display text-3xl font-semibold text-ink-900">{t("auth.title")}</h1>
+            <h1 className="font-display text-3xl font-semibold text-fg">{t("auth.title")}</h1>
             <p className="mt-1 mb-8 text-sm text-muted">{t("auth.subtitle")}</p>
             <LoginForm />
             <p className="mt-8 text-xs leading-relaxed text-muted lg:hidden">{t("auth.contact")}</p>

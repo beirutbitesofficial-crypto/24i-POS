@@ -14,6 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/card";
 import { PinDialog } from "@/components/ui/pin-dialog";
 import { LanguageSwitch } from "@/components/shell/language-switch";
+import { ThemeSwitch } from "@/components/shell/theme-switch";
 import { UserMenu } from "@/components/shell/user-menu";
 import { D, formatLbp, formatUsd, formatWeight, usdToLbp } from "@/lib/money";
 import { priceCart, type ChangeCurrency } from "@/lib/pricing";
@@ -271,7 +272,7 @@ export function PosClient({
             ? <img src={settings.logoUrl} alt="" className="size-10 rounded-full bg-ivory-100 object-cover" />
             : <div className="grid size-10 place-items-center rounded-full bg-gold-500 font-bold text-white">24i</div>}
           <div className="leading-tight">
-            <div className="text-sm font-semibold text-ivory-50">{settings.storeName}</div>
+            <div className="text-sm font-semibold text-white">{settings.storeName}</div>
             <div className="flex items-center gap-1 text-[11px] text-gold-300"><Clock className="size-3" />{t("shift.number")} #{shift.number}</div>
           </div>
         </div>
@@ -282,12 +283,12 @@ export function PosClient({
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); onSearchEnter(); } if (e.key === "Escape") setQuery(""); }}
             placeholder={t("pos.search")}
-            className="h-11 w-full rounded-xl border border-ink-700 bg-ink-800 ps-11 pe-10 text-[15px] text-ivory-50 placeholder:text-ink-400 focus:border-gold-400 focus:outline-none"
+            className="h-11 w-full rounded-xl border border-ink-700 bg-ink-800 ps-11 pe-10 text-[15px] text-white placeholder:text-ink-400 focus:border-gold-400 focus:outline-none"
           />
           {query && <button onClick={() => setQuery("")} className="absolute top-1/2 -translate-y-1/2 text-ink-400 end-3"><X className="size-4" /></button>}
         </div>
         {settings.printMode === "BRIDGE" && settings.printBridgeUrl && (
-          <Button variant="ghost" className="text-ink-300 hover:bg-ink-800 hover:text-ivory-50" title={t("pos.openDrawer")}
+          <Button variant="ghost" className="text-ink-300 hover:bg-ink-800 hover:text-white" title={t("pos.openDrawer")}
             onClick={async () => {
               const r = await logDrawerOpen({ reason: null });
               if (!r.ok) return toast.error(te(r.error));
@@ -296,14 +297,14 @@ export function PosClient({
             <Inbox className="size-5" /><span className="hidden xl:inline">{t("pos.openDrawer")}</span>
           </Button>
         )}
-        <Button variant="ghost" className="relative text-ink-300 hover:bg-ink-800 hover:text-ivory-50" onClick={openHeld}>
+        <Button variant="ghost" className="relative text-ink-300 hover:bg-ink-800 hover:text-white" onClick={openHeld}>
           <PlayCircle className="size-5" /><span className="hidden lg:inline">{t("pos.held")}</span>
           {heldCount > 0 && <span className="num absolute -top-0.5 grid size-5 place-items-center rounded-full bg-gold-400 text-[10px] font-bold text-white end-0">{heldCount}</span>}
         </Button>
-        <Button asChild variant="ghost" className="text-ink-300 hover:bg-ink-800 hover:text-ivory-50">
+        <Button asChild variant="ghost" className="text-ink-300 hover:bg-ink-800 hover:text-white">
           <Link prefetch={false} href={user.canBackOffice ? "/dashboard" : "/shifts"}>{user.canBackOffice ? <LayoutDashboard className="size-5" /> : <Wallet className="size-5" />}<span className="hidden xl:inline">{user.canBackOffice ? t("pos.backOffice") : t("shift.my")}</span></Link>
         </Button>
-        <LanguageSwitch dark className="hidden sm:inline-flex" />
+        <ThemeSwitch dark className="hidden sm:inline-flex" /><LanguageSwitch dark className="hidden sm:inline-flex" />
         <UserMenu name={user.name} role={user.role} dark />
       </header>
 
@@ -314,7 +315,7 @@ export function PosClient({
             {[{ id: null as string | null, name: t("pos.allCategories"), color: null as string | null }, ...categories].map((c) => (
               <button key={c.id ?? "all"} onClick={() => setCat(c.id)}
                 className={cn("flex h-11 shrink-0 items-center gap-2 rounded-xl border px-4 text-sm font-medium transition",
-                  cat === c.id ? "border-gold-500 bg-gold-500 text-white shadow-[var(--shadow-brand)]" : "border-ivory-300 bg-white text-ink-800 hover:bg-ivory-200")}>
+                  cat === c.id ? "border-gold-500 bg-gold-500 text-white shadow-[var(--shadow-brand)]" : "border-ivory-300 bg-ivory-50 text-fg hover:bg-ivory-200")}>
                 {c.color && <span className="size-2.5 rounded-full" style={{ background: c.color }} />}{c.name}
               </button>
             ))}
@@ -333,7 +334,7 @@ export function PosClient({
                   const weight = p.variants.length > 0 && p.variants.every((v) => v.sellMode === "WEIGHT");
                   return (
                     <button key={p.id} onClick={() => tapProduct(p)}
-                      className={cn("group relative flex min-h-[132px] flex-col overflow-hidden rounded-2xl border bg-white p-3 text-start shadow-[var(--shadow-card)] transition-[transform,box-shadow,border-color] duration-200 ease-out touch-manipulation active:scale-[0.97] active:duration-75",
+                      className={cn("group relative flex min-h-[132px] flex-col overflow-hidden rounded-2xl border bg-ivory-50 p-3 text-start shadow-[var(--shadow-card)] transition-[transform,box-shadow,border-color] duration-200 ease-out touch-manipulation active:scale-[0.97] active:duration-75",
                         anySellable ? "border-ivory-300 hover:-translate-y-0.5 hover:border-gold-300 hover:shadow-[var(--shadow-lift)]" : "border-dashed border-ivory-400 opacity-70")}>
                       <span className="absolute inset-x-0 top-0 h-1" style={{ background: catColor ?? "var(--color-gold-300)" }} />
                       <div className="mb-2 flex items-start justify-between gap-2">
@@ -343,7 +344,7 @@ export function PosClient({
                           : <div className="grid size-11 place-items-center rounded-lg bg-ivory-100 text-gold-600">{weight ? <Scale className="size-5" /> : p.variants.length ? <PackageIcon className="size-5" /> : <ImageIcon className="size-5 text-ink-300" />}</div>}
                         {p.variants.length > 1 && <Badge className="num">{p.variants.length}</Badge>}
                       </div>
-                      <div className="line-clamp-2 text-[14.5px] leading-snug font-semibold text-ink-900">{p.name}</div>
+                      <div className="line-clamp-2 text-[14.5px] leading-snug font-semibold text-fg">{p.name}</div>
                       <div className="truncate text-[11.5px] text-muted">{p.altName}</div>
                       <div className="mt-auto pt-2">
                         {price ? <span className="num text-[15px] font-semibold text-gold-700">{price}</span>
@@ -361,7 +362,7 @@ export function PosClient({
         <aside className="flex max-h-[55dvh] w-full shrink-0 flex-col border-t border-ivory-300 bg-ivory-50 lg:max-h-none lg:w-[400px] lg:border-t-0 lg:border-s xl:w-[440px]">
           <div className="flex items-center justify-between px-4 py-3">
             <div>
-              <div className="text-sm font-semibold text-ink-900">{t("pos.cart")}</div>
+              <div className="text-sm font-semibold text-fg">{t("pos.cart")}</div>
               <div className="text-xs text-muted">{t("pos.items", { count: itemsCount })}</div>
             </div>
             <div className="flex gap-1">
@@ -386,7 +387,7 @@ export function PosClient({
                 {(D(done.changeUsd).gt(0) || D(done.changeLbp).gt(0)) && (
                   <div className="mt-3">
                     <div className="text-xs text-muted">{t("pos.change")}</div>
-                    <div className="num text-3xl font-bold text-ink-900">
+                    <div className="num text-3xl font-bold text-fg">
                       {D(done.changeUsd).gt(0) && <div>{formatUsd(done.changeUsd)}</div>}
                       {D(done.changeLbp).gt(0) && <div>{formatLbp(done.changeLbp, locale)}</div>}
                     </div>
@@ -410,11 +411,11 @@ export function PosClient({
                   const unit = l.priceOverride ?? e.variant.price ?? "0";
                   return (
                     <li key={l.key} className="animate-slide-in-end">
-                      <button onClick={() => setEditKey(l.key)} className="flex w-full items-start gap-3 rounded-xl border border-ivory-200 bg-white px-3 py-2.5 text-start transition-[border-color,transform] duration-150 touch-manipulation hover:border-gold-300 active:scale-[0.99]">
+                      <button onClick={() => setEditKey(l.key)} className="flex w-full items-start gap-3 rounded-xl border border-ivory-200 bg-ivory-50 px-3 py-2.5 text-start transition-[border-color,transform] duration-150 touch-manipulation hover:border-gold-300 active:scale-[0.99]">
                         <div className="min-w-0 flex-1">
-                          <div className="truncate text-sm font-semibold text-ink-900">{e.product.name}</div>
+                          <div className="truncate text-sm font-semibold text-fg">{e.product.name}</div>
                           {e.variant.label && <div className="truncate text-xs text-muted">{e.variant.label}</div>}
-                          <div className="num mt-0.5 text-xs text-ink-600">
+                          <div className="num mt-0.5 text-xs text-fg-2">
                             {e.variant.sellMode === "WEIGHT" ? formatWeight(l.quantity, locale) : `${l.quantity} ×`} {formatUsd(unit)}{e.variant.sellMode === "WEIGHT" && t("pos.perKg")}
                             {l.priceOverride && <Badge tone="warn" className="ms-1">✎</Badge>}
                           </div>
@@ -431,16 +432,16 @@ export function PosClient({
             )}
           </div>
 
-          <div className="shrink-0 border-t border-ivory-300 bg-white px-4 pt-3 pb-4">
+          <div className="shrink-0 border-t border-ivory-300 bg-ivory-50 px-4 pt-3 pb-4">
             <div className="space-y-1 text-sm">
               <div className="flex justify-between text-muted"><span>{t("pos.subtotal")}</span><span className="num">{formatUsd(priced.subtotal)}</span></div>
               {priced.discountTotal.gt(0) && <div className="flex justify-between text-success"><span>{t("pos.discount")}</span><span className="num">−{formatUsd(priced.discountTotal)}</span></div>}
               {settings.taxEnabled && <div className="flex justify-between text-muted"><span>{settings.taxLabel}{settings.taxInclusive ? " (incl.)" : ""}</span><span className="num">{formatUsd(priced.taxTotal)}</span></div>}
             </div>
             <div className="mt-2 flex items-end justify-between">
-              <span className="text-sm font-semibold text-ink-700">{t("pos.total")}</span>
+              <span className="text-sm font-semibold text-fg-2">{t("pos.total")}</span>
               <div className="text-end">
-                <div key={priced.total.toString()} className="num animate-fade-in text-3xl font-bold tracking-tight text-ink-900">{formatUsd(priced.total)}</div>
+                <div key={priced.total.toString()} className="num animate-fade-in text-3xl font-bold tracking-tight text-fg">{formatUsd(priced.total)}</div>
                 <div className="num text-xs text-muted">{formatLbp(totalLbp, locale)}</div>
               </div>
             </div>
@@ -460,9 +461,9 @@ export function PosClient({
             return (
               <button key={v.id} onClick={() => chooseVariant(picker, v)}
                 className={cn("flex items-center justify-between gap-3 rounded-xl border p-4 text-start transition-[border-color,transform,box-shadow] duration-150 touch-manipulation hover:shadow-[var(--shadow-card)] active:scale-[0.98]",
-                  ok ? "border-ivory-300 bg-white hover:border-gold-400" : "border-dashed border-ivory-400 bg-ivory-100 opacity-70")}>
+                  ok ? "border-ivory-300 bg-ivory-50 hover:border-gold-400" : "border-dashed border-ivory-400 bg-ivory-100 opacity-70")}>
                 <div className="min-w-0">
-                  <div className="font-semibold text-ink-900">{v.label || picker.name}</div>
+                  <div className="font-semibold text-fg">{v.label || picker.name}</div>
                   <div className="text-xs text-muted">
                     {v.sellMode === "WEIGHT" ? <Scale className="me-1 inline size-3" /> : <PackageIcon className="me-1 inline size-3" />}
                     <span className="num">{v.trackStock ? t("pos.inStock", { qty: `${Number(v.stock)} ${v.unitCode}` }) : t("cat.madeToOrder")}</span>
@@ -506,7 +507,7 @@ export function PosClient({
           <div className="flex overflow-hidden rounded-lg border border-ivory-300">
             {(["PERCENT", "AMOUNT"] as const).map((k) => (
               <button key={k} type="button" onClick={() => setCart((c) => ({ ...c, cartDiscount: { type: k, value: c.cartDiscount?.value ?? "" } }))}
-                className={cn("px-4 text-sm", (cart.cartDiscount?.type ?? "PERCENT") === k ? "bg-ink-900 text-ivory-50" : "bg-white")}>{k === "PERCENT" ? "%" : "$"}</button>
+                className={cn("px-4 text-sm", (cart.cartDiscount?.type ?? "PERCENT") === k ? "bg-ink-900 text-white" : "bg-ivory-50")}>{k === "PERCENT" ? "%" : "$"}</button>
             ))}
           </div>
           <Input dir="ltr" inputMode="decimal" autoFocus className="h-12 text-xl" value={cart.cartDiscount?.value ?? ""}
@@ -520,7 +521,7 @@ export function PosClient({
         {heldList.length === 0 ? <p className="py-6 text-center text-sm text-muted">{t("pos.noHeld")}</p> : (
           <ul className="space-y-2">
             {heldList.map((h) => (
-              <li key={h.id} className="flex items-center justify-between rounded-xl border border-ivory-300 bg-white px-4 py-3">
+              <li key={h.id} className="flex items-center justify-between rounded-xl border border-ivory-300 bg-ivory-50 px-4 py-3">
                 <div>
                   <div className="text-sm font-semibold">{h.label || t("pos.items", { count: h.lines })}</div>
                   <div className="num text-xs text-muted">{new Date(h.createdAt).toLocaleTimeString(locale === "ar" ? "ar-LB" : "en-GB", { hour: "2-digit", minute: "2-digit" })} · {h.userName}</div>
@@ -535,7 +536,7 @@ export function PosClient({
       {/* Network failure */}
       <Dialog open={!!offline} onOpenChange={(o) => !o && setOffline(null)} title={t("err.SERVER_ERROR")} size="sm"
         footer={<Button variant="gold" loading={busy} onClick={() => offline && submitSale(offline.tenders, offline.changeCurrency, offline.approverPin)}>{t("pos.retry")}</Button>}>
-        <p className="text-sm text-ink-700">{t("pos.offline")}</p>
+        <p className="text-sm text-fg-2">{t("pos.offline")}</p>
       </Dialog>
     </div>
   );

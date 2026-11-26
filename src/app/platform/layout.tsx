@@ -3,6 +3,7 @@ import Link from "next/link";
 import { requirePageUser } from "@/lib/auth";
 import { BrandMark } from "@/components/shell/brand-mark";
 import { LanguageSwitch } from "@/components/shell/language-switch";
+import { ThemeSwitch } from "@/components/shell/theme-switch";
 import { UserMenu } from "@/components/shell/user-menu";
 
 export default async function PlatformLayout({ children }: { children: React.ReactNode }) {
@@ -13,7 +14,7 @@ export default async function PlatformLayout({ children }: { children: React.Rea
       <header className="lux-dark flex h-16 items-center justify-between px-4 sm:px-8">
         <Link prefetch={false} href="/platform"><BrandMark light /></Link>
         <div className="flex items-center gap-2">
-          <LanguageSwitch dark />
+          <ThemeSwitch dark /><LanguageSwitch dark />
           <UserMenu name={user.name} role="ADMIN" dark />
         </div>
       </header>

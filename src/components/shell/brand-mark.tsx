@@ -8,7 +8,7 @@ export function BrandMark({ className, light }: { className?: string; light?: bo
         24i
       </div>
       <div className="leading-tight">
-        <div className={cn("text-[15px] font-bold tracking-tight", light ? "text-white" : "text-ink-900")}>24i POS</div>
+        <div className={cn("text-[15px] font-bold tracking-tight", light ? "text-white" : "text-fg")}>24i POS</div>
         <div className={cn("text-[11px]", light ? "text-ink-400" : "text-muted")}>Retail OS</div>
       </div>
     </div>

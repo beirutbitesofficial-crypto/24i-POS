@@ -67,9 +67,9 @@ export default async function InventoryPage({ searchParams }: { searchParams: Pr
       <div className="mb-4 flex flex-col gap-3 lg:flex-row lg:items-center">
         <SearchBox placeholder={t("cat.searchProducts")} className="lg:w-80" />
         <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-thin">
-          <Link prefetch={false} href={href({ category: undefined })} className={cn(chip, !sp.category ? "border-ink-900 bg-ink-900 text-ivory-50" : "border-ivory-300 bg-ivory-50")}>{t("common.all")}</Link>
+          <Link prefetch={false} href={href({ category: undefined })} className={cn(chip, !sp.category ? "border-ink-900 bg-ink-900 text-white" : "border-ivory-300 bg-ivory-50")}>{t("common.all")}</Link>
           {categories.map((c) => (
-            <Link prefetch={false} key={c.id} href={href({ category: c.id })} className={cn(chip, sp.category === c.id ? "border-ink-900 bg-ink-900 text-ivory-50" : "border-ivory-300 bg-ivory-50")}>{ln(locale, c)}</Link>
+            <Link prefetch={false} key={c.id} href={href({ category: c.id })} className={cn(chip, sp.category === c.id ? "border-ink-900 bg-ink-900 text-white" : "border-ivory-300 bg-ivory-50")}>{ln(locale, c)}</Link>
           ))}
           <Link prefetch={false} href={href({ status: sp.status === "low" ? undefined : "low" })} className={cn(chip, sp.status === "low" ? "border-danger bg-danger text-white" : "border-danger/30 bg-danger-soft text-danger")}>{t("inv.low")} / {t("inv.out")}</Link>
         </div>
