@@ -54,12 +54,14 @@ export const saveSettings = orgAction(
 export async function uploadLogo(form: FormData): Promise<ActionResult<{ id: string | null }>> {
   try {
     const user = await requireOrgUser("settings.manage");
+    // kind=receipt → thermal-friendly receipt logo; otherwise the main store logo
+    const field = form.get("kind") === "receipt" ? "receiptLogoId" : "logoId";
     if (form.get("remove") === "1") {
-      await db.storeSettings.update({ where: { organizationId: user.organizationId }, data: { logoId: null } });
+      await db.storeSettings.update({ where: { organizationId: user.organizationId }, data: { [field]: null } });
       return { ok: true, data: { id: null } };
     }
     const media = await storeUpload(user.organizationId, form.get("file") as File);
-    await db.storeSettings.update({ where: { organizationId: user.organizationId }, data: { logoId: media.id } });
+    await db.storeSettings.update({ where: { organizationId: user.organizationId }, data: { [field]: media.id } });
     return { ok: true, data: { id: media.id } };
   } catch (e) {
     return toActionError(e);

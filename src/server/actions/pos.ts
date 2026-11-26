@@ -62,3 +62,9 @@ export const listHeld = orgAction("pos.sell", z.object({}), async (_i, user) => 
   });
   return rows.map((r) => ({ id: r.id, label: r.label, createdAt: r.createdAt.toISOString(), userName: r.user.name, lines: Array.isArray((r.cart as { lines?: unknown[] }).lines) ? (r.cart as { lines: unknown[] }).lines.length : 0 }));
 });
+
+/** Record a manual "open cash drawer" (no sale) in the audit log. */
+export const logDrawerOpen = orgAction("pos.sell", z.object({ reason: z.string().max(120).nullish() }), async ({ reason }, user) => {
+  await audit({ organizationId: user.organizationId, userId: user.id, action: "pos.drawer_open", details: { reason: reason ?? null } });
+  return { ok: true };
+});

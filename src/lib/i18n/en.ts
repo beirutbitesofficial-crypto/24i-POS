@@ -335,6 +335,8 @@ export const en = {
   "pos.lbpEquiv": "≈ {amount}",
   "pos.offline": "Connection lost — the sale was not saved. Retry when back online; it will not be charged twice.",
   "pos.retry": "Retry",
+  "pos.openDrawer": "Open drawer",
+  "pos.drawerFailed": "Could not reach the print bridge to open the drawer.",
 
   // Inventory
   "inv.title": "Inventory",
@@ -511,6 +513,8 @@ export const en = {
   "set.receiptHeader": "Header line",
   "set.receiptFooter": "Footer message",
   "set.receiptShowLogo": "Show logo",
+  "set.receiptLogo": "Receipt logo (thermal printer)",
+  "set.receiptLogoHint": "Black on white prints sharpest. Leave empty to use the store logo.",
   "set.receiptShowLbp": "Show LBP total",
   "set.printer": "Printer",
   "set.printMode": "Print method",

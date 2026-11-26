@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import {
   Search, PauseCircle, PlayCircle, Trash2, Percent, LayoutDashboard, Scale, Package as PackageIcon, ShoppingBasket,
-  CheckCircle2, Printer, ImageIcon, X, Wallet, Clock,
+  CheckCircle2, Printer, ImageIcon, X, Wallet, Clock, Inbox,
 } from "lucide-react";
 import { useI18n } from "@/lib/i18n/client";
 import { Button } from "@/components/ui/button";
@@ -18,11 +18,11 @@ import { UserMenu } from "@/components/shell/user-menu";
 import { D, formatLbp, formatUsd, formatWeight, usdToLbp } from "@/lib/money";
 import { priceCart, type ChangeCurrency } from "@/lib/pricing";
 import { cn, uuid } from "@/lib/utils";
-import { completeSale, holdSale, listHeld, resumeHeld, approveVoid, registerPrint } from "@/server/actions/pos";
+import { completeSale, holdSale, listHeld, resumeHeld, approveVoid, registerPrint, logDrawerOpen } from "@/server/actions/pos";
 import { WeightDialog } from "./weight-dialog";
 import { PaymentDialog, type Tender } from "./payment-dialog";
 import { LineDialog } from "./line-dialog";
-import { printReceipt } from "./print";
+import { printReceipt, openDrawer } from "./print";
 import { emptyCart, type Cart, type CartLine, type PosCategory, type PosProduct, type PosSettings, type PosVariant } from "./types";
 
 type PinPurpose = { kind: "sale"; tenders: Tender[]; changeCurrency: ChangeCurrency } | { kind: "void"; line: CartLine } | { kind: "reprint"; saleId: string };
@@ -286,6 +286,16 @@ export function PosClient({
           />
           {query && <button onClick={() => setQuery("")} className="absolute top-1/2 -translate-y-1/2 text-ink-400 end-3"><X className="size-4" /></button>}
         </div>
+        {settings.printMode === "BRIDGE" && settings.printBridgeUrl && (
+          <Button variant="ghost" className="text-ink-300 hover:bg-ink-800 hover:text-ivory-50" title={t("pos.openDrawer")}
+            onClick={async () => {
+              const r = await logDrawerOpen({ reason: null });
+              if (!r.ok) return toast.error(te(r.error));
+              if (!(await openDrawer(settings.printBridgeUrl!))) toast.error(t("pos.drawerFailed"));
+            }}>
+            <Inbox className="size-5" /><span className="hidden xl:inline">{t("pos.openDrawer")}</span>
+          </Button>
+        )}
         <Button variant="ghost" className="relative text-ink-300 hover:bg-ink-800 hover:text-ivory-50" onClick={openHeld}>
           <PlayCircle className="size-5" /><span className="hidden lg:inline">{t("pos.held")}</span>
           {heldCount > 0 && <span className="num absolute -top-0.5 grid size-5 place-items-center rounded-full bg-gold-500 text-[10px] font-bold text-ink-950 end-0">{heldCount}</span>}

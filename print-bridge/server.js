@@ -14,7 +14,10 @@
  *   /dev/usb/lp0                Linux USB printer device
  *
  * Env: PORT (9123), PRINTER, ALLOWED_ORIGIN (your POS URL, e.g. https://pos.example.com),
- *      CUT (1), DRAWER (1 = kick the cash drawer after printing), COLS (48 for 80 mm, 32 for 58 mm)
+ *      CUT (1), DRAWER (auto = open the cash drawer on cash sales [default], always, never),
+ *      COLS (48 for 80 mm, 32 for 58 mm)
+ *
+ *   POST /drawer  → opens the cash drawer (drawer cable plugged into the printer's RJ11 "DK" port)
  *
  * Note: ESC/POS text mode has no Arabic shaping, so the POS requests English
  * receipts from the bridge. For Arabic receipts use browser printing with
@@ -29,7 +32,7 @@ const PRINTER = process.env.PRINTER || "";
 const ALLOWED_ORIGIN = process.env.ALLOWED_ORIGIN || "*";
 const COLS = Number(process.env.COLS || 48);
 const CUT = process.env.CUT !== "0";
-const DRAWER = process.env.DRAWER === "1";
+const DRAWER = (process.env.DRAWER || "auto").toLowerCase(); // auto | always | never
 
 const ESC = "\x1b", GS = "\x1d";
 const INIT = ESC + "@";
@@ -76,7 +79,7 @@ function render(r) {
   if (r.footer) out += "\n" + ascii(r.footer) + "\n";
   out += "24i POS\n" + FEED(4);
   if (CUT) out += CUT_CMD;
-  if (DRAWER) out += KICK;
+  if (DRAWER === "always" || (DRAWER !== "never" && r.openDrawer)) out += KICK;
   return Buffer.from(out, "latin1");
 }
 
@@ -103,6 +106,12 @@ const server = http.createServer((req, res) => {
   res.setHeader("Access-Control-Allow-Private-Network", "true");
   if (req.method === "OPTIONS") return res.writeHead(204).end();
   if (req.method === "GET" && req.url === "/health") return res.writeHead(200, { "Content-Type": "application/json" }).end(JSON.stringify({ ok: true, printer: PRINTER || null }));
+  if (req.method === "POST" && req.url === "/drawer") {
+    send(Buffer.from(INIT + KICK, "latin1"))
+      .then(() => res.writeHead(200, { "Content-Type": "application/json" }).end('{"ok":true}'))
+      .catch((e) => res.writeHead(500, { "Content-Type": "application/json" }).end(JSON.stringify({ ok: false, error: e.message })));
+    return;
+  }
   if (req.method === "POST" && req.url === "/print") {
     let body = "";
     req.on("data", (c) => { body += c; if (body.length > 1e6) req.destroy(); });

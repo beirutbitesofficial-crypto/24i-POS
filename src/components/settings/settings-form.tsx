@@ -20,12 +20,13 @@ export interface SettingsData {
   allowNegativeStock: boolean; cashierMaxDiscount: string; requirePinForVoid: boolean; expiryAlertDays: number; defaultLanguage: "ar" | "en";
 }
 
-export function SettingsForm({ initial, logoUrl, rateUpdated }: { initial: SettingsData; logoUrl: string | null; rateUpdated: string }) {
+export function SettingsForm({ initial, logoUrl, receiptLogoUrl, rateUpdated }: { initial: SettingsData; logoUrl: string | null; receiptLogoUrl: string | null; rateUpdated: string }) {
   const { t, te, locale } = useI18n();
   const router = useRouter();
   const [f, setF] = useState(initial);
   const a = useAction(saveSettings, { success: t("common.saved") });
   const fileRef = useRef<HTMLInputElement>(null);
+  const receiptFileRef = useRef<HTMLInputElement>(null);
   const set = <K extends keyof SettingsData>(k: K, v: SettingsData[K]) => setF((s) => ({ ...s, [k]: v }));
   const logo = async (fd: FormData) => {
     const r = await uploadLogo(fd);
@@ -106,6 +107,22 @@ export function SettingsForm({ initial, logoUrl, rateUpdated }: { initial: Setti
           <CardBody className="grid gap-4">
             <Field label={t("set.receiptHeader")}><Input value={f.receiptHeader ?? ""} onChange={(e) => set("receiptHeader", e.target.value)} /></Field>
             <Field label={t("set.receiptFooter")}><Textarea value={f.receiptFooter ?? ""} onChange={(e) => set("receiptFooter", e.target.value)} className="min-h-14" /></Field>
+            <div className="flex items-center gap-4">
+              <div className="grid size-20 place-items-center overflow-hidden rounded-xl bg-white ring-1 ring-ivory-300">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                {receiptLogoUrl ? <img src={receiptLogoUrl} alt="" className="size-full object-contain" /> : <Receipt className="size-6 text-ink-300" />}
+              </div>
+              <div className="min-w-0 flex-1">
+                <div className="text-xs font-semibold text-ink-700">{t("set.receiptLogo")}</div>
+                <p className="mb-2 text-xs text-muted">{t("set.receiptLogoHint")}</p>
+                <input ref={receiptFileRef} type="file" accept="image/png,image/jpeg,image/webp" className="hidden"
+                  onChange={(e) => { const file = e.target.files?.[0]; if (file) { const fd = new FormData(); fd.set("file", file); fd.set("kind", "receipt"); void logo(fd); } e.target.value = ""; }} />
+                <div className="flex gap-2">
+                  <Button type="button" variant="outline" size="sm" onClick={() => receiptFileRef.current?.click()}><Upload className="size-4" />{t("common.upload")}</Button>
+                  {receiptLogoUrl && <Button type="button" variant="ghost" size="sm" onClick={() => { const fd = new FormData(); fd.set("remove", "1"); fd.set("kind", "receipt"); void logo(fd); }}><X className="size-4" /></Button>}
+                </div>
+              </div>
+            </div>
             <div className="flex flex-wrap gap-6">
               <Switch checked={f.receiptShowLogo} onChange={(v) => set("receiptShowLogo", v)} label={t("set.receiptShowLogo")} />
               <Switch checked={f.receiptShowLbp} onChange={(v) => set("receiptShowLbp", v)} label={t("set.receiptShowLbp")} />

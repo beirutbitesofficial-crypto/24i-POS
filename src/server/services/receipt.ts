@@ -28,6 +28,8 @@ export interface ReceiptData {
   footer: string | null;
   refunded: boolean;
   paperWidthMm: number;
+  /** true when cash changed hands → print bridge kicks the cash drawer */
+  openDrawer: boolean;
 }
 
 export async function buildReceipt(user: OrgUser, saleId: string, locale: Locale): Promise<ReceiptData | null> {
@@ -49,7 +51,7 @@ export async function buildReceipt(user: OrgUser, saleId: string, locale: Locale
     header: s.receiptHeader,
     address: s.address,
     phone: s.phone,
-    logoUrl: s.receiptShowLogo ? mediaUrl(s.logoId) : null,
+    logoUrl: s.receiptShowLogo ? mediaUrl(s.receiptLogoId ?? s.logoId) : null,
     number: sale.number,
     date: sale.createdAt.toLocaleString(ar ? "ar-LB" : "en-GB", { dateStyle: "short", timeStyle: "short" }),
     cashier: sale.cashier.name,
@@ -76,5 +78,6 @@ export async function buildReceipt(user: OrgUser, saleId: string, locale: Locale
     footer: s.receiptFooter,
     refunded: sale.status !== "COMPLETED",
     paperWidthMm: s.paperWidthMm,
+    openDrawer: sale.payments.some((p) => p.method === "CASH"),
   };
 }

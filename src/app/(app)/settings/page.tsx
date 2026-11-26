@@ -15,6 +15,7 @@ export default async function SettingsPage() {
       <PageHeader eyebrow={t("nav.settings")} title={t("set.title")} />
       <SettingsForm
         logoUrl={mediaUrl(s.logoId)}
+        receiptLogoUrl={mediaUrl(s.receiptLogoId)}
         rateUpdated={s.exchangeRateUpdated.toLocaleString(locale === "ar" ? "ar-LB" : "en-GB", { dateStyle: "medium", timeStyle: "short" })}
         initial={{
           storeName: s.storeName, storeNameAr: s.storeNameAr, address: s.address, phone: s.phone,

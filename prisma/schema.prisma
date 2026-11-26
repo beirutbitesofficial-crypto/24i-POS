@@ -118,6 +118,8 @@ model StoreSettings {
   address             String?
   phone               String?
   logoId              String?
+  /// Optional thermal-friendly logo for receipts (falls back to logoId)
+  receiptLogoId       String?
   baseCurrency        String       @default("USD")
   /// LBP per 1 USD
   exchangeRate        Decimal      @default(89500) @db.Decimal(14, 2)

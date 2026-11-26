@@ -329,6 +329,8 @@ export const ar: Record<keyof typeof en, string> = {
   "pos.lbpEquiv": "≈ {amount}",
   "pos.offline": "انقطع الاتصال — لم تُحفظ الفاتورة. أعد المحاولة عند عودة الاتصال؛ لن تُحتسب مرتين.",
   "pos.retry": "إعادة المحاولة",
+  "pos.openDrawer": "فتح الدرج",
+  "pos.drawerFailed": "تعذّر الوصول إلى جسر الطباعة لفتح الدرج.",
 
   "inv.title": "المخزون",
   "inv.onHand": "المتوفر",
@@ -499,6 +501,8 @@ export const ar: Record<keyof typeof en, string> = {
   "set.receiptHeader": "سطر الترويسة",
   "set.receiptFooter": "رسالة الختام",
   "set.receiptShowLogo": "إظهار الشعار",
+  "set.receiptLogo": "شعار الإيصال (طابعة حرارية)",
+  "set.receiptLogoHint": "الأسود على خلفية بيضاء يُطبع بأوضح شكل. اتركه فارغاً لاستخدام شعار المتجر.",
   "set.receiptShowLbp": "إظهار المجموع بالليرة",
   "set.printer": "الطابعة",
   "set.printMode": "طريقة الطباعة",

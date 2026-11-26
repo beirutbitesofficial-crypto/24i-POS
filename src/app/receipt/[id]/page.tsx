@@ -27,7 +27,7 @@ export default async function ReceiptPage({ params, searchParams }: { params: Pr
       <div className="receipt font-sans">
         {r.logoUrl && (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={r.logoUrl} alt="" style={{ width: "26mm", height: "26mm", objectFit: "contain", margin: "0 auto 2mm", display: "block", filter: "grayscale(1)" }} />
+          <img src={r.logoUrl} alt="" style={{ width: "34mm", height: "34mm", objectFit: "contain", margin: "0 auto 2mm", display: "block", filter: "grayscale(1) contrast(1.15)" }} />
         )}
         <div className="text-center text-[15px] font-bold">{r.storeName}</div>
         {r.header && <div className="text-center">{r.header}</div>}

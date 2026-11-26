@@ -33,3 +33,13 @@ export async function printReceipt(saleId: string, mode: "BROWSER" | "BRIDGE", b
   document.body.appendChild(frame);
   setTimeout(() => frame.remove(), 60_000);
 }
+
+/** Open the cash drawer through the local print bridge (drawer cable in the printer's DK port). */
+export async function openDrawer(bridgeUrl: string): Promise<boolean> {
+  try {
+    const res = await fetch(`${bridgeUrl.replace(/\/$/, "")}/drawer`, { method: "POST" });
+    return res.ok;
+  } catch {
+    return false;
+  }
+}
