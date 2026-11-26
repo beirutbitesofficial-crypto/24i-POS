@@ -30,7 +30,7 @@ export function variantLabel(
 
 export async function variantOptions(organizationId: string, locale: Locale, withCost: boolean): Promise<VariantOption[]> {
   const vs = await db.productVariant.findMany({
-    where: { organizationId, active: true },
+    where: { organizationId, active: true, trackStock: true },
     include: { product: true, brand: true, variety: true, unit: true, packageUnit: true, barcodes: { select: { code: true } } },
     orderBy: [{ product: { category: { sortOrder: "asc" } } }, { product: { sortOrder: "asc" } }, { sortOrder: "asc" }],
   });

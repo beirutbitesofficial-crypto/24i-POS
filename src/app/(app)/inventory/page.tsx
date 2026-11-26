@@ -22,7 +22,7 @@ export default async function InventoryPage({ searchParams }: { searchParams: Pr
   const sp = await searchParams;
   const orgId = user.organizationId;
   const canCost = can(user.role, "catalog.costs");
-  const where: Prisma.ProductVariantWhereInput = { organizationId: orgId, active: true };
+  const where: Prisma.ProductVariantWhereInput = { organizationId: orgId, active: true, trackStock: true };
   if (sp.category) where.product = { categoryId: sp.category };
   if (sp.q) where.OR = [
     { product: { nameEn: { contains: sp.q, mode: "insensitive" } } }, { product: { nameAr: { contains: sp.q } } },
@@ -39,6 +39,7 @@ export default async function InventoryPage({ searchParams }: { searchParams: Pr
       : Promise.resolve([{ v: null }]),
   ]);
   const status = (v: (typeof variants)[number]) => {
+    if (!v.trackStock) return "ok";
     const q = D(v.stockQty);
     if (q.lte(0)) return "out";
     if (v.minStock !== null && q.lte(D(v.minStock))) return "low";

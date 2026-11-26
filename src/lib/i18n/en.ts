@@ -227,6 +227,8 @@ export const en = {
   "cat.minStock": "Min. stock (alert)",
   "cat.reorderQty": "Reorder qty",
   "cat.trackExpiry": "Track expiry dates",
+  "cat.trackStock": "Track stock",
+  "cat.madeToOrder": "Made to order (no stock)",
   "cat.taxable": "Taxable",
   "cat.setupNote": "Setup note",
   "cat.noPrice": "No price",

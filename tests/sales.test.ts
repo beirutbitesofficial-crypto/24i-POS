@@ -147,6 +147,29 @@ describe("sales engine", () => {
     expect((await db.sale.findUniqueOrThrow({ where: { id: sale.id } })).status).toBe("PARTIALLY_REFUNDED");
   });
 
+  it("made-to-order items sell without stock and are never restocked", async () => {
+    const cashier = await makeUser(ctx.org.id, "CASHIER");
+    const manager = await makeUser(ctx.org.id, "MANAGER", "5555");
+    await openShift(ctx.org.id, cashier.id);
+    await openShift(ctx.org.id, manager.id);
+    const v = await makeVariant(ctx.org.id, ctx.product.id, ctx.units.get("piece")!, { price: "3", cost: "1.2", mode: "UNIT" });
+    await db.productVariant.update({ where: { id: v.id }, data: { trackStock: false } });
+    const r = await createSale(cashier, {
+      clientRef: "sandwich-sale-001", lines: [{ variantId: v.id, quantity: "2" }],
+      payments: [{ method: "CASH", currency: "USD", amount: "6" }], changeCurrency: "USD",
+    });
+    const sale = await db.sale.findUniqueOrThrow({ where: { id: r.saleId }, include: { items: true } });
+    expect(sale.costTotal.toString()).toBe("2.4"); // 2 × standard cost
+    expect(await db.stockMovement.count({ where: { variantId: v.id } })).toBe(0);
+    await createRefund(manager, {
+      clientRef: "sandwich-refund-01", saleId: sale.id, items: [{ saleItemId: sale.items[0].id, quantity: "1", restock: true }],
+      reason: "wrong order", method: "CASH", currency: "USD",
+    });
+    const after = await db.productVariant.findUniqueOrThrow({ where: { id: v.id } });
+    expect(after.stockQty.toString()).toBe("0");
+    expect(await db.stockMovement.count({ where: { variantId: v.id } })).toBe(0);
+  });
+
   it("stock ledger always equals cached balance", async () => {
     const rows = await db.$queryRaw<{ id: string; stock: string; ledger: string }[]>`
       SELECT v.id, v."stockQty"::text AS stock, COALESCE(SUM(m.quantity),0)::text AS ledger

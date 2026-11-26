@@ -222,6 +222,8 @@ export const ar: Record<keyof typeof en, string> = {
   "cat.minStock": "الحد الأدنى (تنبيه)",
   "cat.reorderQty": "كمية إعادة الطلب",
   "cat.trackExpiry": "تتبع تاريخ الانتهاء",
+  "cat.trackStock": "تتبع المخزون",
+  "cat.madeToOrder": "يُحضَّر عند الطلب (بلا مخزون)",
   "cat.taxable": "خاضع للضريبة",
   "cat.setupNote": "ملاحظة الإعداد",
   "cat.noPrice": "بلا سعر",

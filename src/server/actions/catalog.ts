@@ -176,6 +176,7 @@ const variantSchema = z.object({
   minStock: qty,
   reorderQty: qty,
   trackExpiry: z.boolean().default(false),
+  trackStock: z.boolean().default(true),
   active: z.boolean().default(true),
   barcodes: z.array(z.string().trim().min(3).max(64)).max(20).default([]),
 });

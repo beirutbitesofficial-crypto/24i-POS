@@ -322,6 +322,8 @@ model ProductVariant {
   minStock         Decimal?     @db.Decimal(14, 3)
   reorderQty       Decimal?     @db.Decimal(14, 3)
   trackExpiry      Boolean      @default(false)
+  /// false for made-to-order items (e.g. sandwiches): sold without stock checks or movements
+  trackStock       Boolean      @default(true)
   imageId          String?
   active           Boolean      @default(true)
   sortOrder        Int          @default(0)

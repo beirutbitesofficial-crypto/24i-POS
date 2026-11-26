@@ -91,7 +91,7 @@ export function PosClient({
   }, [cart, variantIndex, settings]);
   const totalLbp = usdToLbp(priced.total, settings.rate, settings.lbpRounding, settings.lbpMode);
 
-  const sellable = (v: PosVariant) => v.price !== null && (settings.allowNegativeStock || D(v.stock).gt(0));
+  const sellable = (v: PosVariant) => v.price !== null && (!v.trackStock || settings.allowNegativeStock || D(v.stock).gt(0));
 
   const addLine = useCallback((variant: PosVariant, product: PosProduct, qty: string) => {
     setDone(null);
@@ -455,7 +455,7 @@ export function PosClient({
                   <div className="font-semibold text-ink-900">{v.label || picker.name}</div>
                   <div className="text-xs text-muted">
                     {v.sellMode === "WEIGHT" ? <Scale className="me-1 inline size-3" /> : <PackageIcon className="me-1 inline size-3" />}
-                    <span className="num">{t("pos.inStock", { qty: `${Number(v.stock)} ${v.unitCode}` })}</span>
+                    <span className="num">{v.trackStock ? t("pos.inStock", { qty: `${Number(v.stock)} ${v.unitCode}` }) : t("cat.madeToOrder")}</span>
                   </div>
                 </div>
                 <div className="text-end">

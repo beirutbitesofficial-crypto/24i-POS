@@ -44,7 +44,7 @@ export default async function PosPage() {
         .filter(Boolean).join(" · ");
       return {
         id: v.id, sku: v.sku, label, sellMode: v.sellMode, unitCode: v.unit.code, allowsDecimal: v.unit.allowsDecimal,
-        price: v.price?.toString() ?? null, stock: v.stockQty.toString(), barcodes: v.barcodes.map((b) => b.code),
+        price: v.price?.toString() ?? null, stock: v.stockQty.toString(), trackStock: v.trackStock, barcodes: v.barcodes.map((b) => b.code),
         search: [v.sku, v.brand?.nameEn, v.brand?.nameAr, v.variety?.nameEn, v.variety?.nameAr, v.labelEn, v.labelAr].filter(Boolean).join(" ").toLowerCase(),
       };
     });

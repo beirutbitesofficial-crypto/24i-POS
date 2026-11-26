@@ -18,7 +18,7 @@ export interface VariantRow {
   id: string; brandId: string | null; varietyId: string | null; labelAr: string | null; labelEn: string | null; sku: string;
   sellMode: "WEIGHT" | "UNIT"; packaging: "LOOSE" | "PACKED"; unitId: string; packageSize: string | null; packageUnitId: string | null;
   price: string | null; wholesalePrice: string | null; cost: string | null; supplierId: string | null; minStock: string | null; reorderQty: string | null;
-  trackExpiry: boolean; active: boolean; barcodes: string[]; stockQty: string; unitCode: string; priceIsDefault: boolean;
+  trackExpiry: boolean; trackStock: boolean; active: boolean; barcodes: string[]; stockQty: string; unitCode: string; priceIsDefault: boolean;
   brandName: string | null; varietyName: string | null;
 }
 
@@ -37,7 +37,7 @@ export function VariantsManager({
     brandId: null, varietyId: null, labelAr: null, labelEn: null, sku: "", sellMode: "UNIT", packaging: "PACKED",
     unitId: units.find((u) => u.kind === "COUNT")?.id ?? units[0]?.id ?? "", packageSize: null, packageUnitId: null,
     price: null, wholesalePrice: null, cost: null, supplierId: null, minStock: null, reorderQty: null,
-    trackExpiry: false, active: true, barcodes: [], barcodesText: "",
+    trackExpiry: false, trackStock: true, active: true, barcodes: [], barcodesText: "",
   });
   const set = <K extends keyof Form>(k: K, v: Form[K]) => setForm((f) => (f ? { ...f, [k]: v } : f));
   const weightUnits = units.filter((u) => u.kind === "WEIGHT");
@@ -77,8 +77,10 @@ export function VariantsManager({
                   <TD className="num">{v.price ? <>{formatUsd(v.price)}{v.sellMode === "WEIGHT" && <span className="text-xs text-muted">{t("pos.perKg")}</span>}{v.priceIsDefault && <Badge tone="info" className="ms-1.5">{t("cat.defaultPrice")}</Badge>}</> : <Badge tone="warn"><AlertTriangle className="size-3" />{t("cat.noPrice")}</Badge>}</TD>
                   {canCost && <TD className="num text-muted">{v.cost ? formatUsd(v.cost) : "—"}</TD>}
                   <TD className="num">
-                    <span className={v.minStock && Number(v.stockQty) <= Number(v.minStock) ? "font-semibold text-danger" : ""}>{Number(v.stockQty).toString()}</span>
-                    <span className="text-xs text-muted"> {v.unitCode}</span>
+                    {v.trackStock ? <>
+                      <span className={v.minStock && Number(v.stockQty) <= Number(v.minStock) ? "font-semibold text-danger" : ""}>{Number(v.stockQty).toString()}</span>
+                      <span className="text-xs text-muted"> {v.unitCode}</span>
+                    </> : <Badge tone="info">{t("cat.madeToOrder")}</Badge>}
                   </TD>
                   <TD><Badge tone={v.active ? "success" : "neutral"}>{v.active ? t("common.active") : t("common.inactive")}</Badge></TD>
                   <TD className="text-end">
@@ -177,6 +179,7 @@ export function VariantsManager({
               <Textarea dir="ltr" className="num min-h-16" value={form.barcodesText} onChange={(e) => set("barcodesText", e.target.value)} />
             </Field>
             <div className="flex flex-wrap gap-6 sm:col-span-2">
+              <Switch checked={form.trackStock} onChange={(v) => set("trackStock", v)} label={t("cat.trackStock")} />
               <Switch checked={form.trackExpiry} onChange={(v) => set("trackExpiry", v)} label={t("cat.trackExpiry")} />
               <Switch checked={form.active} onChange={(v) => set("active", v)} label={t("common.active")} />
             </div>

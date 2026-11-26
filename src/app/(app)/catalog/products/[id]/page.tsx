@@ -74,7 +74,7 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
               id: v.id, brandId: v.brandId, varietyId: v.varietyId, labelAr: v.labelAr, labelEn: v.labelEn, sku: v.sku, sellMode: v.sellMode,
               packaging: v.packaging, unitId: v.unitId, packageSize: s(v.packageSize), packageUnitId: v.packageUnitId, price: s(v.price),
               wholesalePrice: s(v.wholesalePrice), cost: canCost ? s(v.cost) : null, supplierId: v.supplierId, minStock: s(v.minStock),
-              reorderQty: s(v.reorderQty), trackExpiry: v.trackExpiry, active: v.active, barcodes: v.barcodes.map((b) => b.code),
+              reorderQty: s(v.reorderQty), trackExpiry: v.trackExpiry, trackStock: v.trackStock, active: v.active, barcodes: v.barcodes.map((b) => b.code),
               stockQty: v.stockQty.toString(), unitCode: v.unit.code, priceIsDefault: v.priceIsDefault, brandName: v.brand ? ln(locale, v.brand) : null, varietyName: v.variety ? ln(locale, v.variety) : null,
             }))}
           />

@@ -7,6 +7,7 @@ export interface PosVariant {
   allowsDecimal: boolean;
   price: string | null;
   stock: string;
+  trackStock: boolean;
   barcodes: string[];
   search: string;
 }

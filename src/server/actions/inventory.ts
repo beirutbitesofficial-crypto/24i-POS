@@ -137,7 +137,7 @@ export const convertStock = orgAction(
 export const startCount = orgAction("inventory.manage", z.object({ categoryId: optStr(40), notes: optStr(300) }), async (input, user) => {
   const orgId = user.organizationId;
   const variants = await db.productVariant.findMany({
-    where: { organizationId: orgId, active: true, ...(input.categoryId ? { product: { categoryId: input.categoryId } } : {}) },
+    where: { organizationId: orgId, active: true, trackStock: true, ...(input.categoryId ? { product: { categoryId: input.categoryId } } : {}) },
     select: { id: true, stockQty: true },
   });
   const count = await db.stockCount.create({

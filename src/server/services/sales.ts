@@ -112,7 +112,7 @@ export async function createSale(user: OrgUser, input: SaleInput) {
   try {
     return await db.$transaction(
       async (tx) => {
-        const locked = await lockVariants(tx, orgId, lines.map((l) => l.variant.id));
+        const locked = await lockVariants(tx, orgId, lines.filter((l) => l.variant.trackStock).map((l) => l.variant.id));
         const number = await nextNumber(tx, orgId, "sale");
         const sale = await tx.sale.create({
           data: {
@@ -131,10 +131,14 @@ export async function createSale(user: OrgUser, input: SaleInput) {
           const l = lines[i];
           const p = priced.lines[i];
           const v = l.variant;
-          const consumption = await removeStock(tx, {
-            organizationId: orgId, variantId: v.id, type: "SALE", quantity: l.quantity, allowNegative: settings.allowNegativeStock,
-            refType: "SALE", refId: sale.id, userId: user.id, current: locked.get(v.id)!,
-          });
+          // Made-to-order items (trackStock = false) are sold without stock checks/movements;
+          // their cost comes from the configured standard cost.
+          const consumption = v.trackStock
+            ? await removeStock(tx, {
+                organizationId: orgId, variantId: v.id, type: "SALE", quantity: l.quantity, allowNegative: settings.allowNegativeStock,
+                refType: "SALE", refId: sale.id, userId: user.id, current: locked.get(v.id)!,
+              })
+            : { cost: l.quantity.mul(D(v.cost ?? 0)).toDecimalPlaces(4) };
           costTotal = costTotal.plus(consumption.cost);
           await tx.saleItem.create({
             data: {
@@ -235,6 +239,11 @@ export async function createRefund(user: OrgUser, input: RefundInput) {
       },
     });
 
+    // Never "restock" made-to-order items
+    const untracked = new Set((await tx.productVariant.findMany({
+      where: { id: { in: plan.map((p) => p.item.variantId) }, trackStock: false }, select: { id: true },
+    })).map((v) => v.id));
+    for (const p of plan) if (untracked.has(p.item.variantId)) p.restock = false;
     const restockIds = plan.filter((p) => p.restock).map((p) => p.item.variantId);
     const locked = await lockVariants(tx, orgId, restockIds);
     for (const p of plan) {

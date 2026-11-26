@@ -69,6 +69,28 @@ const UNIT: Record<string, Record<string, string>> = {
   "Bread (Khobez)": { Forno: "1", Pandor: "1.5", "Tanour El Aasr": "1" },
 };
 
+/** Sandwiches (owner's list, prices in LBP). Made to order → no stock tracking. */
+const SANDWICHES: { ar: string; en: string; lbp: number; isDefault?: boolean }[] = [
+  { ar: "لبنة مع خضرة", en: "Labneh with Vegetables Sandwich", lbp: 200000 },
+  { ar: "لبنة ماعز", en: "Goat Labneh Sandwich", lbp: 280000 },
+  { ar: "لبنة مع مكدوس", en: "Labneh with Makdous Sandwich", lbp: 250000 },
+  { ar: "فيتا أعشاب", en: "Feta with Herbs Sandwich", lbp: 250000 },
+  { ar: "حبش وجبنة قشقوان", en: "Turkey & Kashkaval Sandwich", lbp: 400000 },
+  { ar: "نوتيلا وموز", en: "Nutella & Banana Sandwich", lbp: 250000 },
+  { ar: "قريشة وعسل", en: "Areesheh & Honey Sandwich", lbp: 300000 },
+  { ar: "تونا", en: "Tuna Sandwich", lbp: 400000 },
+  { ar: "حلوم", en: "Halloumi Sandwich", lbp: 270000 },
+  { ar: "بلغاري هنغارية", en: "Bulgarian (Hungarian) Cheese Sandwich", lbp: 280000 },
+  { ar: "حلوم وقشقوان", en: "Halloumi & Kashkaval Sandwich", lbp: 350000 },
+  { ar: "فيتا عادي", en: "Plain Feta Sandwich", lbp: 250000 },
+  { ar: "مرتديلا", en: "Mortadella Sandwich", lbp: 250000 },
+  { ar: "مربى وزبدة", en: "Jam & Butter Sandwich", lbp: 250000 },
+  { ar: "حلاوة وموز", en: "Halawa & Banana Sandwich", lbp: 250000 },
+  { ar: "عكاوي وقشقوان", en: "Akkawi & Kashkaval Sandwich", lbp: 350000 },
+  { ar: "عكاوي", en: "Akkawi Sandwich", lbp: 270000 },
+  { ar: "حلوم مشوي وبيستو", en: "Grilled Halloumi & Pesto Sandwich", lbp: 300000, isDefault: true },
+];
+
 const DEFAULT_NOTE = "Default prices added by 24i — review and save each variant with your real price.";
 
 export async function applyVillageDairyDefaults(tx: Tx, organizationId: string, nextSku: () => Promise<string>) {
@@ -172,6 +194,41 @@ export async function applyVillageDairyDefaults(tx: Tx, organizationId: string, 
       const key = prices["*"] ? "*" : (v.variety?.nameEn ?? v.brand?.nameEn ?? "");
       const price = prices[key];
       if (price && (await setPrice(v.id, price))) touched.add(p.id);
+    }
+  }
+
+  // 7) Sandwiches category — LBP prices converted at the store's exchange rate
+  const settings = await tx.storeSettings.findUnique({ where: { organizationId } });
+  const rate = Number(settings?.exchangeRate ?? 89500);
+  let sandwichCat = await tx.category.findFirst({ where: { organizationId, nameEn: "Sandwiches" } });
+  if (!sandwichCat) {
+    const maxOrder = await tx.category.aggregate({ where: { organizationId }, _max: { sortOrder: true } });
+    sandwichCat = await tx.category.create({
+      data: { organizationId, nameEn: "Sandwiches", nameAr: "سندويشات", code: "G", sortOrder: (maxOrder._max.sortOrder ?? 0) + 1 },
+    });
+    log.push("+ category Sandwiches");
+  }
+  for (const [i, sw] of SANDWICHES.entries()) {
+    let prod = await tx.product.findFirst({ where: { organizationId, categoryId: sandwichCat.id, nameEn: sw.en } });
+    if (!prod) {
+      prod = await tx.product.create({
+        data: {
+          organizationId, categoryId: sandwichCat.id, nameEn: sw.en, nameAr: sw.ar, sortOrder: i,
+          setupNote: sw.isDefault ? "Default price added by 24i (300,000 LBP) — review and save with your real price." : null,
+        },
+      });
+      log.push(`+ product ${sw.en}`);
+    }
+    const existing = await tx.productVariant.findFirst({ where: { organizationId, productId: prod.id } });
+    if (!existing) {
+      const price = (Math.round((sw.lbp / rate) * 10000) / 10000).toFixed(4);
+      const v = await tx.productVariant.create({
+        data: {
+          organizationId, productId: prod.id, sku: await nextSku(), sellMode: "UNIT", packaging: "PACKED",
+          unitId: units.get("piece")!, price, priceIsDefault: !!sw.isDefault, trackStock: false,
+        },
+      });
+      await tx.priceHistory.create({ data: { organizationId, variantId: v.id, field: "price", oldValue: null, newValue: price, userId: null } });
     }
   }
 

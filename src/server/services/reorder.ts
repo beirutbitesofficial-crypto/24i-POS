@@ -5,7 +5,7 @@ import { D, Decimal } from "@/lib/money";
 /** Variants at/below minimum stock, with 30-day average daily sales and a suggested order quantity. */
 export async function reorderSuggestions(organizationId: string) {
   const variants = await db.productVariant.findMany({
-    where: { organizationId, active: true, minStock: { not: null } },
+    where: { organizationId, active: true, trackStock: true, minStock: { not: null } },
     include: { product: true, brand: true, variety: true, unit: true, packageUnit: true, supplier: true },
   });
   const low = variants.filter((v) => D(v.stockQty).lte(D(v.minStock)));
