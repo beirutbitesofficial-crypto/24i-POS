@@ -10,7 +10,7 @@ export default async function PlatformLayout({ children }: { children: React.Rea
   if (!user.isPlatformAdmin) redirect("/");
   return (
     <div className="min-h-dvh">
-      <header className="flex h-16 items-center justify-between bg-ink-900 px-4 sm:px-8">
+      <header className="lux-dark flex h-16 items-center justify-between px-4 sm:px-8">
         <Link prefetch={false} href="/platform"><BrandMark light /></Link>
         <div className="flex items-center gap-2">
           <LanguageSwitch dark />

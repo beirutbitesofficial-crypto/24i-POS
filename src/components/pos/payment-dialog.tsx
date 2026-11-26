@@ -76,7 +76,7 @@ export function PaymentDialog({
             <div className="flex overflow-hidden rounded-xl border border-ivory-300" dir="ltr">
               {(["USD", "LBP"] as const).map((c) => (
                 <button key={c} type="button" onClick={() => setCurrency(c)}
-                  className={cn("h-12 w-20 text-sm font-semibold", currency === c ? "bg-gold-500 text-ink-950" : "bg-white text-ink-700")}>{c === "USD" ? "$ USD" : "LBP"}</button>
+                  className={cn("h-12 w-20 text-sm font-semibold", currency === c ? "bg-gold-500 text-white" : "bg-white text-ink-700")}>{c === "USD" ? "$ USD" : "LBP"}</button>
               ))}
             </div>
             <input value={entry} onChange={(e) => setEntry(e.target.value.replace(/[^\d.]/g, ""))} inputMode="decimal" dir="ltr"
@@ -101,7 +101,7 @@ export function PaymentDialog({
           <NumPad value={entry} onChange={setEntry} decimals={currency === "USD"} className="hidden sm:grid" />
         </div>
 
-        <div className="flex flex-col rounded-2xl bg-ink-900 p-5 text-ivory-50">
+        <div className="lux-dark lux-edge flex flex-col rounded-2xl p-5 text-white">
           <div className="text-xs tracking-wide text-ink-300 uppercase">{t("pos.total")}</div>
           <div className="num text-4xl font-semibold text-gold-300">{formatUsd(total)}</div>
           <div className="num text-sm text-ink-300">{formatLbp(totalLbp, locale)}</div>
@@ -134,7 +134,7 @@ export function PaymentDialog({
                     <div className="grid grid-cols-3 gap-1 rounded-lg bg-ink-800 p-1">
                       {(["USD", "LBP", "MIXED"] as const).map((c) => (
                         <button key={c} type="button" onClick={() => setChangeCurrency(c)}
-                          className={cn("rounded-md py-1.5 text-xs font-medium", changeCurrency === c ? "bg-gold-500 text-ink-950" : "text-ink-300")}>
+                          className={cn("rounded-md py-1.5 text-xs font-medium", changeCurrency === c ? "bg-gold-500 text-white" : "text-ink-300")}>
                           {c === "USD" ? "$" : c === "LBP" ? "LBP" : t("pos.mixed")}
                         </button>
                       ))}

@@ -20,7 +20,7 @@ export function LoginForm() {
       {state?.error && (
         <div className="rounded-lg bg-danger-soft px-3 py-2 text-sm text-danger" role="alert">{t(`auth.${state.error}` as DictKey)}</div>
       )}
-      <Button type="submit" variant="primary" size="lg" className="w-full" loading={pending}>
+      <Button type="submit" variant="gold" size="lg" className="w-full" loading={pending}>
         {pending ? t("auth.signingIn") : t("auth.signIn")}
       </Button>
     </form>

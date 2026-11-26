@@ -3,6 +3,7 @@ import { getCurrentUser } from "@/lib/auth";
 import { getI18n } from "@/lib/i18n/server";
 import { BrandMark } from "@/components/shell/brand-mark";
 import { LanguageSwitch } from "@/components/shell/language-switch";
+import { InstallAppButton } from "@/components/shell/install-app";
 import { LoginForm } from "./login-form";
 
 export const metadata = { title: "Sign in" };
@@ -12,13 +13,12 @@ export default async function LoginPage() {
   const { t } = await getI18n();
   return (
     <main className="grid min-h-dvh lg:grid-cols-[1.1fr_1fr]">
-      <section className="relative hidden overflow-hidden bg-ink-900 lg:block">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_20%_10%,rgb(184_150_78/0.25),transparent_55%),radial-gradient(ellipse_at_90%_90%,rgb(184_150_78/0.12),transparent_50%)]" />
+      <section className="lux-dark relative hidden overflow-hidden lg:block">
         <div className="relative flex h-full flex-col justify-between p-12">
           <BrandMark light />
           <div className="max-w-md">
-            <div className="mb-6 h-px w-16 bg-gold-400" />
-            <h2 className="font-display text-4xl leading-tight text-ivory-50">{t("app.tagline")}</h2>
+            <div className="mb-6 h-1 w-12 rounded-full bg-gradient-to-r from-gold-300 to-gold-500" />
+            <h2 className="font-display text-5xl leading-[1.05] font-bold tracking-tight text-white">{t("app.tagline")}</h2>
             <p className="mt-4 text-ink-300">{t("auth.contact")}</p>
           </div>
           <div className="text-xs text-ink-400" dir="ltr">© {new Date().getFullYear()} 24i</div>
@@ -27,7 +27,7 @@ export default async function LoginPage() {
       <section className="flex flex-col">
         <div className="flex justify-between p-5">
           <div className="lg:hidden"><BrandMark /></div>
-          <LanguageSwitch className="ms-auto" />
+          <div className="ms-auto flex items-center gap-1"><InstallAppButton /><LanguageSwitch /></div>
         </div>
         <div className="flex flex-1 items-center justify-center px-6 pb-16">
           <div className="w-full max-w-sm">

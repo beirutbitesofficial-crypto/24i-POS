@@ -2,8 +2,8 @@
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { useI18n } from "@/lib/i18n/client";
 
-/** Validated single-series hue (passes lightness/chroma/contrast on the ivory surface). */
-const SERIES = "#b07d1f";
+/** Validated single-series hue — 24i teal (passes lightness/chroma/contrast on the white surface). */
+const SERIES = "#008f8f";
 
 export function TrendBars({ data, valueLabel }: { data: { label: string; value: number; sub?: string }[]; valueLabel: string }) {
   const { dir } = useI18n();
@@ -12,12 +12,12 @@ export function TrendBars({ data, valueLabel }: { data: { label: string; value: 
     <div className="h-64 w-full" dir="ltr">
       <ResponsiveContainer width="100%" height="100%">
         <BarChart data={data} margin={{ top: 8, right: 8, left: 0, bottom: 0 }} barCategoryGap={6}>
-          <CartesianGrid vertical={false} stroke="#e9e2d3" strokeDasharray="0" />
-          <XAxis dataKey="label" tickLine={false} axisLine={{ stroke: "#d8cfbb" }} tick={{ fontSize: 11, fill: "#6b7080" }} reversed={dir === "rtl"} interval="preserveStartEnd" />
+          <CartesianGrid vertical={false} stroke="#e5e7eb" strokeDasharray="0" />
+          <XAxis dataKey="label" tickLine={false} axisLine={{ stroke: "#d1d5db" }} tick={{ fontSize: 11, fill: "#6b7080" }} reversed={dir === "rtl"} interval="preserveStartEnd" />
           <YAxis tickLine={false} axisLine={false} tick={{ fontSize: 11, fill: "#6b7080" }} tickFormatter={fmt} width={56} orientation={dir === "rtl" ? "right" : "left"} />
           <Tooltip
-            cursor={{ fill: "rgba(184,150,78,0.10)" }}
-            contentStyle={{ borderRadius: 12, border: "1px solid #e9e2d3", background: "#fffdf8", fontSize: 12 }}
+            cursor={{ fill: "rgba(0,140,140,0.08)" }}
+            contentStyle={{ borderRadius: 12, border: "1px solid #e5e7eb", background: "#ffffff", boxShadow: "0 12px 32px -12px rgb(16 24 40 / 0.25)", fontSize: 12 }}
             formatter={(v: number) => [fmt(v), valueLabel]}
             labelFormatter={(l, p) => (p?.[0]?.payload?.sub ? `${l} · ${p[0].payload.sub}` : String(l))}
           />

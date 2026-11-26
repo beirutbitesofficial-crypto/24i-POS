@@ -1,6 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 
-const PUBLIC = ["/login", "/api/health", "/_next", "/favicon"];
+const PUBLIC = ["/login", "/api/health", "/_next", "/favicon", "/manifest.webmanifest", "/icons/", "/icon", "/apple-icon"];
 
 // Cheap gate: no session cookie → login. Real validation happens server-side on every page/action.
 export function middleware(req: NextRequest) {

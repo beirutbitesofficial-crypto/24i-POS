@@ -4,8 +4,8 @@ import { cn } from "@/lib/utils";
 import { Loader2 } from "lucide-react";
 
 const variants = {
-  primary: "bg-ink-900 text-ivory-50 hover:bg-ink-800 shadow-sm",
-  gold: "bg-gold-500 text-ink-950 hover:bg-gold-400 shadow-sm",
+  primary: "bg-ink-900 text-white hover:bg-ink-800 shadow-[0_8px_20px_-10px_rgb(6_10_11/0.6)]",
+  gold: "lux-brand text-white",
   secondary: "bg-ivory-200 text-ink-900 hover:bg-ivory-300",
   outline: "border border-ivory-300 bg-ivory-50 text-ink-900 hover:bg-ivory-200",
   ghost: "text-ink-800 hover:bg-ivory-200",

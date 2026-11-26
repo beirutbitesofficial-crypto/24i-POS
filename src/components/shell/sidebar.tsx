@@ -66,12 +66,12 @@ export function Sidebar({ perms, modules, storeName, logoUrl }: { perms: string[
   const isActive = (href: string) => pendingHref ? pendingHref === href : pathname === href || (href !== "/inventory" && pathname.startsWith(href + "/")) || (href === "/settings" && pathname === "/settings");
 
   const content = (
-    <div className="flex h-full flex-col bg-ink-900 text-ink-300">
+    <div className="lux-dark flex h-full flex-col text-ink-300">
       <div className="flex items-center justify-between px-5 pt-5 pb-4">
         <BrandMark light />
         <button className="text-ink-300 lg:hidden" onClick={() => setOpen(false)} aria-label="Close"><X className="size-5" /></button>
       </div>
-      <div className="mx-4 mb-4 flex items-center gap-3 rounded-xl border border-ink-700 bg-ink-800/60 p-2.5">
+      <div className="lux-edge mx-4 mb-4 flex items-center gap-3 rounded-xl bg-white/[0.04] p-2.5 backdrop-blur">
         {logoUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img src={logoUrl} alt="" className="size-10 rounded-lg bg-ivory-100 object-cover" />
@@ -103,7 +103,7 @@ export function Sidebar({ perms, modules, storeName, logoUrl }: { perms: string[
                         onTouchStart={() => router.prefetch(i.href)}
                         className={cn(
                           "group flex items-center gap-3 rounded-lg px-3 py-2 text-[13.5px] transition-[background-color,color,box-shadow] duration-150",
-                          active ? "bg-ink-800 text-ivory-50 shadow-[inset_2px_0_0_var(--color-gold-400)] rtl:shadow-[inset_-2px_0_0_var(--color-gold-400)]" : "hover:bg-ink-800/60 hover:text-ivory-50",
+                          active ? "bg-gradient-to-r from-gold-500/20 to-transparent text-white shadow-[inset_2px_0_0_var(--color-gold-300)] rtl:bg-gradient-to-l rtl:shadow-[inset_-2px_0_0_var(--color-gold-300)]" : "hover:bg-white/[0.05] hover:text-white",
                         )}
                       >
                         <Icon className={cn("size-[18px] shrink-0", active ? "text-gold-300" : "text-ink-400 group-hover:text-gold-300")} />

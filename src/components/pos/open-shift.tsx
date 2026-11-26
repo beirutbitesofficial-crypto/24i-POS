@@ -19,7 +19,7 @@ export function OpenShiftScreen({ storeName, userName, role, canBackOffice }: { 
   const [lbp, setLbp] = useState("");
   const a = useAction(openShift, { refresh: false });
   return (
-    <div className="flex min-h-dvh flex-col bg-ink-900">
+    <div className="lux-dark flex min-h-dvh flex-col">
       <header className="flex items-center justify-between px-6 py-4">
         <BrandMark light />
         <div className="flex items-center gap-2">

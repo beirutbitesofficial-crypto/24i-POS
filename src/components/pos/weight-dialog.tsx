@@ -62,7 +62,7 @@ export function WeightDialog({
         </div>
         <p className="mb-3 text-xs text-muted">{t("pos.weightHint")}</p>
         <NumPad value={raw} onChange={setRaw} decimals={unit === "kg"} />
-        <div className="mt-4 flex items-center justify-between rounded-xl bg-ink-900 px-4 py-3 text-ivory-50">
+        <div className="lux-dark mt-4 flex items-center justify-between rounded-xl px-4 py-3 text-white">
           <span className="num text-lg">{valid ? formatWeight(kg!, locale) : "—"}</span>
           <span className="num text-xl font-semibold text-gold-300">{total ? formatUsd(total) : pricePerKg ? "" : t("pos.priceRequired")}</span>
         </div>

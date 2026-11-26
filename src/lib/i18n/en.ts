@@ -2,6 +2,7 @@ export const en = {
   // App / common
   "app.name": "24i POS",
   "app.tagline": "Retail operating platform",
+  "app.install": "Install app",
   "common.save": "Save",
   "common.saving": "Saving…",
   "common.cancel": "Cancel",

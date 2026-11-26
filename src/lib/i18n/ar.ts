@@ -3,6 +3,7 @@ import type { en } from "./en";
 export const ar: Record<keyof typeof en, string> = {
   "app.name": "24i POS",
   "app.tagline": "منصة إدارة المتاجر",
+  "app.install": "تثبيت التطبيق",
   "common.save": "حفظ",
   "common.saving": "جارٍ الحفظ…",
   "common.cancel": "إلغاء",

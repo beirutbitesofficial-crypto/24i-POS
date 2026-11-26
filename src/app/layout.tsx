@@ -17,7 +17,7 @@ export const metadata: Metadata = {
   description: "24i POS — point of sale, inventory and reporting for retail stores",
 };
 
-export const viewport: Viewport = { width: "device-width", initialScale: 1, themeColor: "#0e1525" };
+export const viewport: Viewport = { width: "device-width", initialScale: 1, themeColor: "#0b1011" };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const { locale, dir } = await getI18n();

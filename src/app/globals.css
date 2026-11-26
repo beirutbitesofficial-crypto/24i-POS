@@ -3,51 +3,53 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
+  /* 24i brand typography (same as 24iproduction.com) */
   --font-sans: "Inter Variable", "IBM Plex Sans Arabic", ui-sans-serif, system-ui, sans-serif;
   --font-arabic: "IBM Plex Sans Arabic", "Inter Variable", ui-sans-serif, system-ui, sans-serif;
-  --font-display: "Playfair Display", "IBM Plex Sans Arabic", Georgia, serif;
+  --font-display: "Inter Variable", "IBM Plex Sans Arabic", ui-sans-serif, system-ui, sans-serif;
 
-  /* Midnight navy / charcoal navigation */
-  --color-ink-950: #0a0f1c;
-  --color-ink-900: #0e1525;
-  --color-ink-800: #161f33;
-  --color-ink-700: #222c44;
-  --color-ink-600: #36405a;
-  --color-ink-400: #8a91a5;
-  --color-ink-300: #b3b8c6;
+  /* Navigation — 24i near-black (token name "ink" kept for compatibility) */
+  --color-ink-950: #060a0b;
+  --color-ink-900: #0b1011;
+  --color-ink-800: #151c1d;
+  --color-ink-700: #1f2829;
+  --color-ink-600: #334041;
+  --color-ink-400: #6f7d7f;
+  --color-ink-300: #c9d3d4;
 
-  /* Warm ivory workspace */
-  --color-ivory-50: #fffdf8;
-  --color-ivory-100: #faf7f0;
-  --color-ivory-200: #f3eee2;
-  --color-ivory-300: #e9e2d3;
-  --color-ivory-400: #d8cfbb;
+  /* Workspace — cool neutral surfaces ("ivory" token names kept) */
+  --color-ivory-50: #ffffff;
+  --color-ivory-100: #f6f7f8;
+  --color-ivory-200: #eef2f2;
+  --color-ivory-300: #e5e7eb;
+  --color-ivory-400: #d1d5db;
 
-  /* Champagne gold accents */
-  --color-gold-50: #fbf6ea;
-  --color-gold-100: #f3e9d0;
-  --color-gold-200: #e6d3a6;
-  --color-gold-300: #d9c089;
-  --color-gold-400: #c8a96a;
-  --color-gold-500: #b8964e;
-  --color-gold-600: #9a7a3a;
-  --color-gold-700: #7a5f2c;
+  /* Brand — 24i teal ("gold" token names kept) */
+  --color-gold-50: #e6f4f4;
+  --color-gold-100: #cdeaea;
+  --color-gold-200: #9fd9d9;
+  --color-gold-300: #5fd0d0;
+  --color-gold-400: #14a3a3;
+  --color-gold-500: #008c8c;
+  --color-gold-600: #007373;
+  --color-gold-700: #005c5c;
 
-  --color-text: #1b2233;
-  --color-muted: #6b7080;
-  --color-success: #2f7d5b;
-  --color-success-soft: #e5f2ea;
-  --color-danger: #b4413a;
-  --color-danger-soft: #f8e7e5;
-  --color-warn: #a8701a;
-  --color-warn-soft: #fbf0d9;
-  --color-info: #2f5d8a;
-  --color-info-soft: #e5edf6;
+  --color-text: #111827;
+  --color-muted: #6b7280;
+  --color-success: #047857;
+  --color-success-soft: #ecfdf5;
+  --color-danger: #b91c1c;
+  --color-danger-soft: #fef2f2;
+  --color-warn: #b45309;
+  --color-warn-soft: #fffbeb;
+  --color-info: #1d4ed8;
+  --color-info-soft: #eff6ff;
 
-  --radius-xl: 0.9rem;
-  --radius-2xl: 1.15rem;
-  --shadow-card: 0 1px 2px rgb(16 24 40 / 0.04), 0 1px 3px rgb(16 24 40 / 0.06);
-  --shadow-lift: 0 10px 30px -12px rgb(14 21 37 / 0.25);
+  --radius-xl: 0.85rem;
+  --radius-2xl: 1.1rem;
+  --shadow-card: 0 1px 2px rgb(16 24 40 / 0.04), 0 2px 8px -2px rgb(16 24 40 / 0.06);
+  --shadow-lift: 0 24px 56px -16px rgb(6 10 11 / 0.32);
+  --shadow-brand: 0 10px 28px -10px rgb(0 140 140 / 0.55);
 }
 
 @layer base {
@@ -166,3 +168,21 @@
     transition-duration: 1ms !important;
   }
 }
+
+/* ───────────────────────── 24i luxury surfaces ───────────────────────── */
+/* Dark panels with the soft teal glow used on 24iproduction.com */
+.lux-dark {
+  background:
+    radial-gradient(120% 70% at 0% 0%, rgb(0 140 140 / 0.22), transparent 55%),
+    radial-gradient(90% 60% at 100% 100%, rgb(0 140 140 / 0.10), transparent 60%),
+    var(--color-ink-900);
+}
+/* Brand gradient fill for primary actions */
+.lux-brand {
+  background: linear-gradient(135deg, #0aa3a3 0%, var(--color-gold-500) 45%, var(--color-gold-600) 100%);
+  box-shadow: var(--shadow-brand), inset 0 1px 0 rgb(255 255 255 / 0.18);
+}
+.lux-brand:hover { filter: brightness(1.06); }
+/* Hairline highlight on dark cards */
+.lux-edge { box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.06), 0 0 0 1px rgb(95 208 208 / 0.08); }
+h1, h2, h3 { letter-spacing: -0.015em; }

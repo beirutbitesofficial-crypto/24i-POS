@@ -36,8 +36,8 @@ export function PageHeader({ title, description, actions, eyebrow }: { title: Re
   return (
     <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
       <div className="min-w-0">
-        {eyebrow && <div className="mb-1 text-xs font-semibold tracking-[0.18em] text-gold-600 uppercase">{eyebrow}</div>}
-        <h1 className="font-display text-2xl font-semibold text-ink-900 sm:text-[28px]">{title}</h1>
+        {eyebrow && <div className="mb-1.5 text-[11px] font-semibold tracking-[0.16em] text-gold-600 uppercase">{eyebrow}</div>}
+        <h1 className="font-display text-2xl font-bold tracking-tight text-ink-900 sm:text-[28px]">{title}</h1>
         {description && <p className="mt-1 max-w-2xl text-sm text-muted">{description}</p>}
       </div>
       {actions && <div className="flex flex-wrap items-center gap-2">{actions}</div>}
@@ -60,11 +60,11 @@ export function StatCard({ label, value, sub, icon, tone = "default" }: { label:
   return (
     <div className={cn(
       "relative overflow-hidden rounded-2xl border p-5",
-      tone === "dark" ? "border-ink-700 bg-ink-900 text-ivory-50" : "border-ivory-300 bg-ivory-50 shadow-[var(--shadow-card)]",
+      tone === "dark" ? "lux-dark lux-edge border-transparent text-white" : "border-ivory-300 bg-ivory-50 shadow-[var(--shadow-card)]",
     )}>
       <div className="flex items-start justify-between">
         <div className={cn("text-xs font-semibold tracking-wide uppercase", tone === "dark" ? "text-gold-300" : "text-muted")}>{label}</div>
-        {icon && <div className={cn("grid size-9 place-items-center rounded-xl", tone === "dark" ? "bg-ink-800 text-gold-300" : "bg-gold-50 text-gold-600")}>{icon}</div>}
+        {icon && <div className={cn("grid size-9 place-items-center rounded-xl", tone === "dark" ? "bg-white/5 text-gold-300 ring-1 ring-white/10" : "bg-gold-50 text-gold-600")}>{icon}</div>}
       </div>
       <div className="num mt-3 text-[26px] font-semibold tracking-tight">{value}</div>
       {sub && <div className={cn("mt-1 text-xs", tone === "dark" ? "text-ink-300" : "text-muted")}>{sub}</div>}

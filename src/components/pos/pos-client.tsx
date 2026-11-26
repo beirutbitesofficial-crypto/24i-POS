@@ -264,12 +264,12 @@ export function PosClient({
   return (
     <div className="flex h-dvh flex-col overflow-hidden bg-ivory-100">
       {/* Top bar */}
-      <header className="flex h-16 shrink-0 items-center gap-3 bg-ink-900 px-3 sm:px-4">
+      <header className="lux-dark flex h-16 shrink-0 items-center gap-3 px-3 sm:px-4">
         <div className="hidden items-center gap-2.5 md:flex">
           {settings.logoUrl
             // eslint-disable-next-line @next/next/no-img-element
             ? <img src={settings.logoUrl} alt="" className="size-10 rounded-full bg-ivory-100 object-cover" />
-            : <div className="grid size-10 place-items-center rounded-full bg-gold-500 font-display font-bold text-ink-950">24i</div>}
+            : <div className="grid size-10 place-items-center rounded-full bg-gold-500 font-bold text-white">24i</div>}
           <div className="leading-tight">
             <div className="text-sm font-semibold text-ivory-50">{settings.storeName}</div>
             <div className="flex items-center gap-1 text-[11px] text-gold-300"><Clock className="size-3" />{t("shift.number")} #{shift.number}</div>
@@ -298,7 +298,7 @@ export function PosClient({
         )}
         <Button variant="ghost" className="relative text-ink-300 hover:bg-ink-800 hover:text-ivory-50" onClick={openHeld}>
           <PlayCircle className="size-5" /><span className="hidden lg:inline">{t("pos.held")}</span>
-          {heldCount > 0 && <span className="num absolute -top-0.5 grid size-5 place-items-center rounded-full bg-gold-500 text-[10px] font-bold text-ink-950 end-0">{heldCount}</span>}
+          {heldCount > 0 && <span className="num absolute -top-0.5 grid size-5 place-items-center rounded-full bg-gold-400 text-[10px] font-bold text-white end-0">{heldCount}</span>}
         </Button>
         <Button asChild variant="ghost" className="text-ink-300 hover:bg-ink-800 hover:text-ivory-50">
           <Link prefetch={false} href={user.canBackOffice ? "/dashboard" : "/shifts"}>{user.canBackOffice ? <LayoutDashboard className="size-5" /> : <Wallet className="size-5" />}<span className="hidden xl:inline">{user.canBackOffice ? t("pos.backOffice") : t("shift.my")}</span></Link>
@@ -314,7 +314,7 @@ export function PosClient({
             {[{ id: null as string | null, name: t("pos.allCategories"), color: null as string | null }, ...categories].map((c) => (
               <button key={c.id ?? "all"} onClick={() => setCat(c.id)}
                 className={cn("flex h-11 shrink-0 items-center gap-2 rounded-xl border px-4 text-sm font-medium transition",
-                  cat === c.id ? "border-ink-900 bg-ink-900 text-ivory-50 shadow" : "border-ivory-300 bg-white text-ink-800 hover:bg-ivory-200")}>
+                  cat === c.id ? "border-gold-500 bg-gold-500 text-white shadow-[var(--shadow-brand)]" : "border-ivory-300 bg-white text-ink-800 hover:bg-ivory-200")}>
                 {c.color && <span className="size-2.5 rounded-full" style={{ background: c.color }} />}{c.name}
               </button>
             ))}
@@ -445,7 +445,7 @@ export function PosClient({
               </div>
             </div>
             <Button variant="gold" size="xl" className="mt-3 w-full text-lg" disabled={!cart.lines.length} onClick={() => setPayOpen(true)}>
-              {t("pos.charge", { amount: formatUsd(priced.total) })}<span className="ms-2 rounded bg-ink-950/10 px-1.5 py-0.5 text-xs">F4</span>
+              {t("pos.charge", { amount: formatUsd(priced.total) })}<span className="ms-2 rounded bg-white/20 px-1.5 py-0.5 text-xs">F4</span>
             </Button>
             <div className="mt-2 text-center text-[11px] text-muted">{t("pos.shortcuts")} · <span className="num">{t("pos.rate", { rate: Number(settings.rate).toLocaleString("en") })}</span></div>
           </div>
