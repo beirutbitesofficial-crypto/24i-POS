@@ -252,3 +252,15 @@ Reprints are marked **COPY**, require the reprint permission or a manager PIN, a
   LBP amounts follow the configured cash rounding
 - Held sales are stored on the server (resume from any till); the in-progress cart also survives a page refresh
 - If the network drops during checkout, *Retry* re-sends the same sale ID — it can't be charged twice
+
+## Ask 24i (AI assistant)
+
+`/assistant` lets owners/managers ask questions in Arabic, English or Arabizi
+("how much profit this month?", "best sellers?", "what should I reorder?").
+Claude answers using read-only tools over the store's own data (sales summary,
+product ranking, stock lookup, low stock), scoped to the user's organization.
+Cost/profit are only shown to roles with `reports.financial`.
+
+Enable it by adding `ANTHROPIC_API_KEY` to the server environment (Hostinger →
+Environment variables) and redeploying. Usage is logged in the audit log as
+`assistant.ask` (with token counts) and capped at 40 questions/user/hour.

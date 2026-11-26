@@ -4,7 +4,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import {
   LayoutDashboard, ShoppingCart, Receipt, Wallet, Package, Tags, Award, Ruler, Boxes, Truck, BarChart3,
-  Settings, Users, ScrollText, Menu, X, PackagePlus, SlidersHorizontal, Repeat, ClipboardList, History, CalendarClock, ListChecks, ShoppingBag,
+  Settings, Users, ScrollText, Menu, X, PackagePlus, SlidersHorizontal, Repeat, ClipboardList, History, CalendarClock, ListChecks, ShoppingBag, Sparkles,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useI18n } from "@/lib/i18n/client";
@@ -42,6 +42,7 @@ const NAV: Section[] = [
       { href: "/inventory/movements", label: "nav.movements", icon: History, perm: "inventory.view", module: "inventory" },
       { href: "/suppliers", label: "nav.suppliers", icon: Truck, perm: "suppliers.manage", module: "inventory" },
       { href: "/reports", label: "nav.reports", icon: BarChart3, perm: "reports.view", module: "reports" },
+      { href: "/assistant", label: "nav.assistant", icon: Sparkles, perm: "reports.view", module: "reports" },
     ],
   },
   {
